@@ -16,8 +16,16 @@ document.getElementById("footer").innerHTML = `
     .pulse {
       animation: pulseGlow 2s infinite ease-in-out;
     }
-    /* Menu Panel */
+    /* Glassmorphism Footer */
+    .glass-footer {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    /* Glassmorphism Menu */
     #menuPanel {
+      backdrop-filter: blur(20px);
+      background: rgba(0, 0, 0, 0.75);
       transition: transform 0.3s ease-in-out;
     }
     #menuPanel.hidden {
@@ -28,7 +36,8 @@ document.getElementById("footer").innerHTML = `
     }
   </style>
 
-  <div class="fixed bottom-0 left-0 w-full flex items-center justify-center gap-10 bg-black/80 py-3 text-white text-xl z-50">
+  <!-- Floating Glass Footer -->
+  <div class="glass-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-10 px-6 py-3 rounded-full text-white text-xl z-50 shadow-lg">
 
     <!-- Home -->
     <a href="index.html" class="hover:scale-125 transition">
@@ -58,8 +67,8 @@ document.getElementById("footer").innerHTML = `
     </button>
   </div>
 
-  <!-- Menu Panel -->
-  <div id="menuPanel" class="fixed bottom-0 left-0 w-full bg-black/95 text-white p-6 hidden">
+  <!-- Glass Menu Panel -->
+  <div id="menuPanel" class="fixed bottom-0 left-0 w-full p-6 hidden rounded-t-2xl shadow-xl">
     <h2 class="text-lg font-bold mb-4">📂 Pages</h2>
     <ul class="space-y-3">
       <li><a href="about.html" class="hover:underline">About Us</a></li>
