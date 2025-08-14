@@ -1,39 +1,49 @@
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// footer.js
+import { getAuth, signOut, onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const auth = getAuth();
 let loggedIn = false;
 
+// ✅ Inject Footer HTML
 document.getElementById("footer").innerHTML = `
-  <div class="flex items-center justify-between w-full px-6 py-3 bg-gradient-to-r from-green-600 via-emerald-500 to-green-700 rounded-full shadow-xl text-white text-sm backdrop-blur-lg border border-white/10">
+  <div class="flex items-center justify-between w-full bg-gradient-to-r from-green-600 via-emerald-500 to-green-700 px-6 py-3 rounded-full shadow-xl text-white text-sm backdrop-blur-lg border border-white/10">
+    
     <!-- Home -->
     <a href="index.html" class="flex flex-col items-center hover:scale-110 transition">
-      <i class="fas fa-home mb-1"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z" />
+      </svg>
       Home
     </a>
 
     <!-- Bookmarks -->
     <button id="footerBookmarks" class="flex flex-col items-center hover:scale-110 transition">
-      <i class="fas fa-bookmark mb-1"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
+      </svg>
       Bookmarks
     </button>
 
     <!-- Submit -->
     <button id="footerSubmit" class="flex flex-col items-center hover:scale-110 transition">
-      <i class="fas fa-plus mb-1"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 4v16m8-8H4" />
+      </svg>
       Submit
     </button>
 
     <!-- Account -->
     <button id="footerAccount" class="flex flex-col items-center hover:scale-110 transition">
-      <i class="fas fa-user mb-1"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
       Account
     </button>
-  </div>
-  
-  <!-- Mini copyright -->
-  <div class="text-xs text-white/70 text-center mt-2">
-    <i class="fas fa-leaf text-green-300"></i>
-    © ${new Date().getFullYear()} TamilGeo — Explore Knowledge
   </div>
 
   <!-- Toast -->
@@ -74,8 +84,21 @@ document.getElementById("footerAccount").addEventListener("click", () => {
 // ✅ Firebase auth listener
 onAuthStateChanged(auth, (user) => {
   loggedIn = !!user;
-  document.getElementById("footerAccount").innerHTML = `
-    <i class="fas fa-user mb-1"></i>
-    ${loggedIn ? "Logout" : "Account"}
-  `;
+  const accountBtn = document.getElementById("footerAccount");
+
+  if (loggedIn) {
+    const photoURL = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=random&color=fff";
+    accountBtn.innerHTML = `
+      <img src="${photoURL}" class="h-6 w-6 mb-1 rounded-full border border-white" alt="Profile">
+      Logout
+    `;
+  } else {
+    accountBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      Account
+    `;
+  }
 });
