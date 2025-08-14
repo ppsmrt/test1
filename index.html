@@ -1,128 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TamilGeo Blog</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #6d28d9, #f59e0b, #ef4444);
-    background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
-    color: #fff;
-  }
-  @keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TamilGeo</title>
 
-  header {
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  .content {
-    padding: 15px;
-    display: grid;
-    gap: 15px;
-  }
-
-  .post {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 12px;
-    backdrop-filter: blur(6px);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  .post:hover {
-    transform: translateY(-4px);
-  }
-  .post h2 {
-    font-size: 18px;
-    margin: 0 0 10px;
-  }
-  .post p {
-    font-size: 14px;
-    color: rgba(255,255,255,0.85);
-  }
-
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    backdrop-filter: blur(8px);
-  }
-  .bottom-nav a {
-    color: #fff;
-    text-decoration: none;
-    text-align: center;
-    font-size: 12px;
-  }
-  .bottom-nav i {
-    display: block;
-    font-size: 20px;
-    margin-bottom: 2px;
-  }
-</style>
-<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      font-family: 'Poppins', sans-serif;
+      padding-bottom: 80px; /* space for nav */
+    }
+    .floating-nav {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      gap: 25px;
+      z-index: 999;
+    }
+    .floating-nav a {
+      text-align: center;
+      transition: 0.3s;
+    }
+    .floating-nav a.active {
+      color: #ff7e5f;
+      transform: translateY(-5px);
+    }
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ff7e5f;
+    }
+  </style>
 </head>
 <body>
 
-<header>TamilGeo</header>
+  <!-- HEADER -->
+  <header class="text-center py-6 text-white">
+    <h1 class="text-3xl font-bold">TamilGeo</h1>
+    <p class="text-sm opacity-90">Your daily infotainment blog</p>
+  </header>
 
-<div class="content" id="posts-container">
-  <p>Loading posts...</p>
-</div>
+  <!-- BLOG CONTENT -->
+  <main id="posts" class="px-4 space-y-4">
+    <div class="bg-white rounded-xl shadow p-4">
+      <h2 class="font-bold text-lg">Loading latest posts...</h2>
+    </div>
+  </main>
 
-<div class="bottom-nav">
-  <a href="#"><i class="fas fa-home"></i>Home</a>
-  <a href="#"><i class="fas fa-fire"></i>Trending</a>
-  <a href="#"><i class="fas fa-search"></i>Search</a>
-  <a href="#"><i class="fas fa-user"></i>Account</a>
-</div>
+  <!-- FLOATING NAV -->
+  <nav class="floating-nav">
+    <a href="#" class="active"><i class="fa fa-home text-lg"></i><br><span class="text-xs">Home</span></a>
+    <a href="#"><i class="fa fa-search text-lg"></i><br><span class="text-xs">Search</span></a>
+    <a href="#"><img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic"></a>
+  </nav>
 
-<script>
-  async function loadPosts() {
-    try {
-      const res = await fetch("https://public-api.wordpress.com/wp/v2/sites/tamilgeo.wordpress.com/posts");
-      const posts = await res.json();
-      const container = document.getElementById("posts-container");
-      container.innerHTML = "";
-
-      posts.forEach(post => {
-        const excerpt = post.excerpt.rendered.replace(/<[^>]+>/g, "").slice(0, 100) + "...";
-        const div = document.createElement("div");
-        div.className = "post";
-        div.innerHTML = `
-          <h2>${post.title.rendered}</h2>
-          <p>${excerpt}</p>
-        `;
-        div.onclick = () => {
-          window.location.href = `post.html?id=${post.id}`;
-        };
-        container.appendChild(div);
+  <script>
+    // Floating Nav Active State
+    document.querySelectorAll('.floating-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelectorAll('.floating-nav a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
       });
-    } catch (err) {
-      console.error(err);
-      document.getElementById("posts-container").innerHTML = "<p>Failed to load posts.</p>";
-    }
-  }
+    });
 
-  loadPosts();
-</script>
+    // Fetch Blog Posts from WordPress
+    fetch('https://public-api.wordpress.com/wp/v2/sites/tamilgeo.wordpress.com/posts')
+      .then(res => res.json())
+      .then(posts => {
+        let html = '';
+        posts.forEach(post => {
+          html += `
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="font-bold text-lg">${post.title.rendered}</h2>
+              <div class="text-sm text-gray-500 mb-2">${new Date(post.date).toLocaleDateString()}</div>
+              <div class="text-gray-700">${post.excerpt.rendered}</div>
+              <a href="post.html?id=${post.id}" class="text-pink-500 font-semibold mt-2 inline-block">Read More</a>
+            </div>
+          `;
+        });
+        document.getElementById('posts').innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('posts').innerHTML = `<div class="text-white">Failed to load posts.</div>`;
+      });
+  </script>
 
 </body>
 </html>
