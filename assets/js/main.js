@@ -83,7 +83,6 @@ function fetchPosts() {
       } else {
         displayPosts(posts);
       }
-
       loadMoreBtn.style.display = currentPage >= totalPages ? "none" : "block";
       isLoading = false;
     })
@@ -119,19 +118,16 @@ function timeAgo(dateString) {
   });
 }
 
-// ✅ Display posts (FA icons for meta)
+// ✅ Display posts
 function displayPosts(posts) {
   const bookmarkedIds = JSON.parse(localStorage.getItem("bookmarkedPosts") || "[]");
 
   posts.forEach(post => {
-    if (!post || !post.id || !post.title) return;
+    if (!post?.id || !post?.title) return;
 
-    let imageUrl = "";
-    if (post.jetpack_featured_media_url) {
-      imageUrl = post.jetpack_featured_media_url;
-    } else if (post._embedded?.["wp:featuredmedia"]?.[0]?.source_url) {
-      imageUrl = post._embedded["wp:featuredmedia"][0].source_url;
-    }
+    let imageUrl = post.jetpack_featured_media_url
+      || post._embedded?.["wp:featuredmedia"]?.[0]?.source_url
+      || "";
 
     const image = imageUrl
       ? `<img src="${imageUrl}" class="w-full h-48 object-cover rounded-t-xl">`
@@ -140,41 +136,43 @@ function displayPosts(posts) {
     const isBookmarked = bookmarkedIds.includes(post.id);
     const bookmarkBtn = `
       <button
-        class="rounded-full p-1 shadow-lg transition text-sm bookmark-btn ${isLoggedIn ? 'bg-white/20 hover:bg-green-400/40 text-green-300' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}"
+        class="bookmark-btn text-lg transition ${isLoggedIn ? 'text-green-300 hover:text-green-400' : 'text-gray-500 cursor-not-allowed'}"
         data-id="${post.id}"
         title="${isLoggedIn ? (isBookmarked ? 'Remove Bookmark' : 'Add to Bookmarks') : 'Login to Bookmark'}"
         ${isLoggedIn ? "" : "disabled"}
       >
-        <i class="fa ${isBookmarked ? 'fa-bookmark' : 'fa-bookmark-o'}"></i>
+        <i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-bookmark"></i>
       </button>`;
 
-    // Placeholder counts (replace with real data if available)
-    const likesCount = Math.floor(Math.random() * 500);
-    const commentsCount = post._embedded?.replies?.[0]?.length || Math.floor(Math.random() * 100);
-    const viewsCount = Math.floor(Math.random() * 2000);
-
     container.innerHTML += `
-      <div class="relative card rounded-xl overflow-hidden shadow-lg">
+      <div class="card rounded-xl overflow-hidden shadow-lg bg-white/5 border border-white/10">
         <a href="post.html?id=${post.id}" class="block">
           ${image}
           <div class="p-4">
             <h2 class="text-lg font-bold text-green-300 mb-2">${post.title.rendered}</h2>
-            <p class="text-sm text-gray-300 mb-2">${stripHTML(post.excerpt.rendered).slice(0, 100)}...</p>
-            <div class="flex justify-between items-center text-xs text-gray-400 mt-4 gap-3">
-              <span><i class="fa fa-heart"></i> <small>${likesCount}</small></span>
-              <span><i class="fa fa-comment"></i> <small>${commentsCount}</small></span>
-              <span><i class="fa fa-eye"></i> <small>${viewsCount}</small></span>
-              ${bookmarkBtn}
-            </div>
+            <p class="text-sm text-gray-300 mb-2">
+              ${stripHTML(post.excerpt.rendered).slice(0, 100)}...
+            </p>
           </div>
         </a>
+        <div class="flex justify-between items-center px-4 pb-4 text-xs text-gray-400">
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+              <i class="fa-solid fa-user"></i> Admin
+            </span>
+            <span class="flex items-center gap-1">
+              <i class="fa-solid fa-calendar-days"></i> ${timeAgo(post.date)}
+            </span>
+          </div>
+          ${bookmarkBtn}
+        </div>
       </div>`;
   });
 
   if (isLoggedIn) attachBookmarkEvents();
 }
 
-// ✅ Bookmark click handler
+// ✅ Bookmark toggle
 function attachBookmarkEvents() {
   document.querySelectorAll(".bookmark-btn").forEach(button => {
     button.addEventListener("click", function (e) {
@@ -182,13 +180,16 @@ function attachBookmarkEvents() {
       const id = parseInt(this.dataset.id);
       let bookmarks = JSON.parse(localStorage.getItem("bookmarkedPosts") || "[]");
 
+      const icon = this.querySelector("i");
       if (bookmarks.includes(id)) {
         bookmarks = bookmarks.filter(bid => bid !== id);
-        this.innerHTML = `<i class="fa fa-bookmark-o"></i>`;
+        icon.classList.remove("fa-solid");
+        icon.classList.add("fa-regular");
         this.title = "Add to Bookmarks";
       } else {
         bookmarks.push(id);
-        this.innerHTML = `<i class="fa fa-bookmark"></i>`;
+        icon.classList.remove("fa-regular");
+        icon.classList.add("fa-solid");
         this.title = "Remove Bookmark";
       }
 
