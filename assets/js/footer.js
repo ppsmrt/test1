@@ -8,31 +8,11 @@ let loggedIn = false;
 // ✅ Inject footer HTML
 document.getElementById("footer").innerHTML = `
   <style>
-    /* 🔥 Pulse animation for Post button */
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 99, 132, 0.7); }
-      50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(255, 99, 132, 1); }
-    }
-    .pulse {
-      animation: pulseGlow 2s infinite ease-in-out;
-    }
     /* Glassmorphism Footer */
     .glass-footer {
       backdrop-filter: blur(12px);
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    /* Glassmorphism Menu */
-    #menuPanel {
-      backdrop-filter: blur(20px);
-      background: rgba(0, 0, 0, 0.75);
-      transition: transform 0.3s ease-in-out;
-    }
-    #menuPanel.hidden {
-      transform: translateY(100%);
-    }
-    #menuPanel.visible {
-      transform: translateY(0%);
     }
   </style>
 
@@ -51,33 +31,21 @@ document.getElementById("footer").innerHTML = `
 
     <!-- Post -->
     <button id="footerSubmit" 
-      class="pulse text-white text-3xl hover:scale-125 transition relative -mt-8 rounded-full p-4 
+      class="text-white text-3xl hover:scale-125 transition relative -mt-8 rounded-full p-4 
       bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 shadow-xl">
       <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <!-- Notifications -->
+    <button id="footerNotifications" class="hover:scale-125 transition relative">
+      <i class="fa-solid fa-bell"></i>
+      <span id="notifBadge" class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full hidden">0</span>
     </button>
 
     <!-- Account -->
     <button id="footerAccount" class="hover:scale-125 transition">
       <i class="fa-solid fa-user-circle"></i>
     </button>
-
-    <!-- Menu -->
-    <button id="footerMenu" class="hover:scale-125 transition">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-  </div>
-
-  <!-- Glass Menu Panel -->
-  <div id="menuPanel" class="fixed bottom-0 left-0 w-full p-6 hidden rounded-t-2xl shadow-xl">
-    <h2 class="text-lg font-bold mb-4">📂 Pages</h2>
-    <ul class="space-y-3">
-      <li><a href="about.html" class="hover:underline">About Us</a></li>
-      <li><a href="contact.html" class="hover:underline">Contact</a></li>
-      <li><a href="categories.html" class="hover:underline">Categories</a></li>
-      <li><a href="privacy.html" class="hover:underline">Privacy Policy</a></li>
-      <li><a href="terms.html" class="hover:underline">Terms & Conditions</a></li>
-    </ul>
-    <button id="closeMenu" class="mt-6 w-full py-2 bg-red-500 rounded-lg">Close</button>
   </div>
 
   <!-- Toast -->
@@ -105,6 +73,11 @@ document.getElementById("footerSubmit").addEventListener("click", () => {
   window.location.href = "submit.html";
 });
 
+document.getElementById("footerNotifications").addEventListener("click", () => {
+  if (!loggedIn) return showToast("Login Required");
+  window.location.href = "notifications.html";
+});
+
 document.getElementById("footerAccount").addEventListener("click", () => {
   if (!loggedIn) {
     window.location.href = "login.html";
@@ -113,17 +86,6 @@ document.getElementById("footerAccount").addEventListener("click", () => {
       signOut(auth);
     }
   }
-});
-
-// ✅ Menu Toggle
-const menuPanel = document.getElementById("menuPanel");
-document.getElementById("footerMenu").addEventListener("click", () => {
-  menuPanel.classList.remove("hidden");
-  setTimeout(() => menuPanel.classList.add("visible"), 10);
-});
-document.getElementById("closeMenu").addEventListener("click", () => {
-  menuPanel.classList.remove("visible");
-  setTimeout(() => menuPanel.classList.add("hidden"), 300);
 });
 
 // ✅ Firebase auth listener
