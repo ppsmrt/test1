@@ -65,7 +65,7 @@ loadMoreBtn?.addEventListener("click", () => {
   }
 });
 
-// ✅ Fetch posts from API (with _embed=1 for images)
+// ✅ Fetch posts from API
 function fetchPosts() {
   isLoading = true;
 
@@ -94,7 +94,7 @@ function fetchPosts() {
     });
 }
 
-// ✅ Clean HTML from text
+// ✅ Strip HTML tags
 function stripHTML(html) {
   const div = document.createElement("div");
   div.innerHTML = html;
@@ -119,14 +119,13 @@ function timeAgo(dateString) {
   });
 }
 
-// ✅ Display posts on screen (Premium Design + Image Fix)
+// ✅ Display posts (FA icons for meta)
 function displayPosts(posts) {
   const bookmarkedIds = JSON.parse(localStorage.getItem("bookmarkedPosts") || "[]");
 
   posts.forEach(post => {
     if (!post || !post.id || !post.title) return;
 
-    // 🔹 Get image from jetpack_featured_media_url or fallback to _embedded
     let imageUrl = "";
     if (post.jetpack_featured_media_url) {
       imageUrl = post.jetpack_featured_media_url;
@@ -141,13 +140,18 @@ function displayPosts(posts) {
     const isBookmarked = bookmarkedIds.includes(post.id);
     const bookmarkBtn = `
       <button
-        class="absolute top-3 right-3 rounded-full p-2 shadow-lg transition text-xl bookmark-btn ${isLoggedIn ? 'bg-white/20 hover:bg-green-400/40 text-green-300' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}"
+        class="rounded-full p-1 shadow-lg transition text-sm bookmark-btn ${isLoggedIn ? 'bg-white/20 hover:bg-green-400/40 text-green-300' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}"
         data-id="${post.id}"
         title="${isLoggedIn ? (isBookmarked ? 'Remove Bookmark' : 'Add to Bookmarks') : 'Login to Bookmark'}"
         ${isLoggedIn ? "" : "disabled"}
       >
-        ${isBookmarked ? '✅' : '📌'}
+        <i class="fa ${isBookmarked ? 'fa-bookmark' : 'fa-bookmark-o'}"></i>
       </button>`;
+
+    // Placeholder counts (replace with real data if available)
+    const likesCount = Math.floor(Math.random() * 500);
+    const commentsCount = post._embedded?.replies?.[0]?.length || Math.floor(Math.random() * 100);
+    const viewsCount = Math.floor(Math.random() * 2000);
 
     container.innerHTML += `
       <div class="relative card rounded-xl overflow-hidden shadow-lg">
@@ -156,20 +160,21 @@ function displayPosts(posts) {
           <div class="p-4">
             <h2 class="text-lg font-bold text-green-300 mb-2">${post.title.rendered}</h2>
             <p class="text-sm text-gray-300 mb-2">${stripHTML(post.excerpt.rendered).slice(0, 100)}...</p>
-            <div class="flex justify-between text-xs text-gray-400 mt-4">
-              <span>👤 TamilGeo</span>
-              <span>🗓️ ${timeAgo(post.date)}</span>
+            <div class="flex justify-between items-center text-xs text-gray-400 mt-4 gap-3">
+              <span><i class="fa fa-heart"></i> <small>${likesCount}</small></span>
+              <span><i class="fa fa-comment"></i> <small>${commentsCount}</small></span>
+              <span><i class="fa fa-eye"></i> <small>${viewsCount}</small></span>
+              ${bookmarkBtn}
             </div>
           </div>
         </a>
-        ${bookmarkBtn}
       </div>`;
   });
 
   if (isLoggedIn) attachBookmarkEvents();
 }
 
-// ✅ Bookmark click handlers
+// ✅ Bookmark click handler
 function attachBookmarkEvents() {
   document.querySelectorAll(".bookmark-btn").forEach(button => {
     button.addEventListener("click", function (e) {
@@ -179,11 +184,11 @@ function attachBookmarkEvents() {
 
       if (bookmarks.includes(id)) {
         bookmarks = bookmarks.filter(bid => bid !== id);
-        this.innerText = "📌";
+        this.innerHTML = `<i class="fa fa-bookmark-o"></i>`;
         this.title = "Add to Bookmarks";
       } else {
         bookmarks.push(id);
-        this.innerText = "✅";
+        this.innerHTML = `<i class="fa fa-bookmark"></i>`;
         this.title = "Remove Bookmark";
       }
 
@@ -191,4 +196,3 @@ function attachBookmarkEvents() {
     });
   });
 }
-
