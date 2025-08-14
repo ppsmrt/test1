@@ -18,28 +18,28 @@ document.getElementById("footer").innerHTML = `
     }
   </style>
 
-  <div class="flex items-center justify-center gap-10 text-white text-xl z-50">
+  <div class="fixed bottom-0 left-0 w-full flex items-center justify-center gap-10 bg-black/80 py-3 text-white text-xl z-50">
 
     <!-- Home -->
     <a href="index.html" class="hover:scale-125 transition">
-      <i class="fa fa-home"></i>
+      <i class="fa-solid fa-home"></i>
     </a>
 
     <!-- Bookmarks -->
     <button id="footerBookmarks" class="hover:scale-125 transition">
-      <i class="fa fa-bookmark"></i>
+      <i class="fa-solid fa-bookmark"></i>
     </button>
 
     <!-- Post (center, big, gradient, pulse) -->
     <button id="footerSubmit" 
-      class="pulse text-white text-3xl hover:scale-125 transition relative -mt-6 rounded-full p-4 
+      class="pulse text-white text-3xl hover:scale-125 transition relative -mt-8 rounded-full p-4 
       bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 shadow-xl">
-      <i class="fa fa-plus"></i>
+      <i class="fa-solid fa-plus"></i>
     </button>
 
     <!-- Account -->
     <button id="footerAccount" class="hover:scale-125 transition">
-      <i class="fa fa-user-circle"></i>
+      <i class="fa-solid fa-user-circle"></i>
     </button>
   </div>
 
@@ -87,6 +87,6 @@ onAuthStateChanged(auth, (user) => {
     const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff`;
     accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white" alt="Profile">`;
   } else {
-    accountBtn.innerHTML = `<i class="fa fa-user-circle"></i>`;
+    accountBtn.innerHTML = `<i class="fa-solid fa-user-circle"></i>`;
   }
 });
