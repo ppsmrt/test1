@@ -1,38 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ta">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Futurastic Blog — Home</title>
-  <link rel="stylesheet" href="assets/css/theme.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TamilGeo - Home</title>
+
+  <!-- ✅ Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Font Awesome 6.5.2 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-MC6E5vbeSFRYxuVXWaJjXKQn5SC2eYyEUZ+cfYY4gXavwhC2EeUlDRt7rkKHlf6IikIfZngjRvmhYlZ4m+Oc7Q=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    .floating-footer {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .card {
+      transition: all 0.4s ease;
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
+      border-color: rgba(0,255,200,0.4);
+    }
+  </style>
 </head>
-<body>
-  <header id="main-header"></header>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex flex-col min-h-screen font-sans">
 
-  <section class="hero">
-    <div class="hero-card">
-      <span class="btn-pill" style="background:linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.45)); color:#fff; border:0;">Premium Gradient UI</span>
-      <h1>Floaty Glass Navigation. Neon Gradients. Live WordPress Posts.</h1>
-      <p>Drop-in static site for GitHub Pages with a futuristic, premium look. Posts stream in from tamilgeo.wordpress.com.</p>
-      <div style="margin-top:14px; display:flex; gap:.6rem; flex-wrap:wrap">
-        <a class="btn" href="posts.html">View Posts</a>
-        <a class="btn btn-primary" href="submit.html">Submit a Post</a>
-      </div>
-    </div>
-  </section>
+  <!-- ✅ Shared Header -->
+  <div id="shared-header"></div>
 
-  <div class="container">
-    <h2 style="margin: 22px 0 12px;">Highlights</h2>
-    <div class="grid">
-      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Gradient Stage</h3><p>Conic/radial glow layers for a luxe aesthetic.</p></div></div>
-      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Glass Cards</h3><p>Soft borders, blur, and premium depth.</p></div></div>
-      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Live Posts</h3><p>Pulls WordPress posts including featured images.</p></div></div>
-    </div>
+  <!-- ✅ Search Input -->
+  <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-6">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="🔍 Search TamilGeo posts..."
+      class="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 shadow-inner focus:outline-none focus:ring-4 focus:ring-green-400 placeholder-gray-300 text-white"
+    />
   </div>
 
-  <footer class="footer">© <span id="y"></span> FuturaPress — Demo mockup</footer>
+  <!-- ✅ Post Grid -->
+  <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 flex-grow max-w-7xl mx-auto" id="posts-container">
+    <!-- Posts will be injected here -->
+  </main>
 
-  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
-  <script src="assets/js/header.js"></script>
+  <!-- ✅ Load More Button -->
+  <div class="flex justify-center mt-4 mb-28">
+    <button
+      id="loadMoreBtn"
+      class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-teal-500 hover:to-green-500 text-white px-8 py-3 rounded-full shadow-lg transition hidden"
+    >
+      Load More
+    </button>
+  </div>
+
+  <!-- ✅ Floating Footer -->
+  <footer id="footer" class="floating-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg flex items-center gap-3 text-sm text-white/90 z-50">
+  </footer>
+
+  <!-- ✅ Scripts -->
+  <script type="module" src="header.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/footer.js"></script>
 </body>
 </html>
