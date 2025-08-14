@@ -161,8 +161,8 @@ function displayPosts(posts) {
             <h2 class="text-lg font-bold text-green-300 mb-2">${post.title.rendered}</h2>
             <p class="text-sm text-gray-300 mb-2">${stripHTML(post.excerpt.rendered).slice(0, 100)}...</p>
             
-            <!-- ✅ Added Admin + Date meta -->
-            <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
+            <!-- ✅ Meta row styled lighter + italic -->
+            <div class="flex items-center gap-4 text-xs text-gray-400 italic mb-3">
               <span class="flex items-center gap-1"><i class="fa fa-user"></i> Admin</span>
               <span class="flex items-center gap-1"><i class="fa fa-calendar"></i> ${timeAgo(post.date)}</span>
             </div>
