@@ -11,7 +11,7 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(180deg, #ff9a9e, #fad0c4);
       min-height: 100vh;
-      padding-bottom: 70px; /* Space for bottom nav */
+      padding-bottom: 70px;
     }
     header {
       text-align: center;
@@ -33,10 +33,12 @@
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
     .post:hover {
-      transform: scale(1.02);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
     .post img {
       width: 100%;
@@ -132,13 +134,15 @@
 
         let date = new Date(post.date).toLocaleDateString("ta-IN");
         postsContainer.innerHTML += `
-          <div class="post">
-            <img src="${img}" alt="Post Image">
-            <div class="post-content">
-              <div class="post-title">${post.title.rendered}</div>
-              <div class="post-meta">${date} • By ${post._embedded.author[0].name}</div>
+          <a href="post.html?id=${post.id}" style="text-decoration:none; color:inherit;">
+            <div class="post">
+              <img src="${img}" alt="Post Image">
+              <div class="post-content">
+                <div class="post-title">${post.title.rendered}</div>
+                <div class="post-meta">${date} • By ${post._embedded.author[0].name}</div>
+              </div>
             </div>
-          </div>
+          </a>
         `;
       });
     } catch (err) {
