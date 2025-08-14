@@ -5,14 +5,14 @@ import { getAuth, signOut, onAuthStateChanged }
 const auth = getAuth();
 let loggedIn = false;
 
-// ✅ Inject footer HTML
 document.getElementById("footer").innerHTML = `
   <style>
-    /* Glassmorphism Footer */
+    /* Frosted Glass Footer */
     .glass-footer {
-      backdrop-filter: blur(12px);
-      background: rgba(30, 30, 30, 0.4); /* more opaque for visibility */
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(17, 25, 40, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.125);
       transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     }
     .glass-footer.hidden-footer {
@@ -21,45 +21,37 @@ document.getElementById("footer").innerHTML = `
     }
   </style>
 
-  <!-- Floating Glass Footer -->
-  <div id="floatingFooter" class="glass-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-10 px-6 py-3 rounded-full text-white text-xl z-50 shadow-lg">
-
-    <!-- Home -->
+  <div id="floatingFooter" class="glass-footer fixed bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center gap-10 px-6 py-3 rounded-full text-white text-xl z-50 shadow-lg">
     <a href="index.html" class="hover:scale-125 transition">
       <i class="fa-solid fa-home"></i>
     </a>
 
-    <!-- Bookmarks -->
     <button id="footerBookmarks" class="hover:scale-125 transition">
       <i class="fa-solid fa-bookmark"></i>
     </button>
 
-    <!-- Post -->
     <button id="footerSubmit" 
       class="text-white text-3xl hover:scale-125 transition relative -mt-8 rounded-full p-4 
       bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 shadow-xl">
       <i class="fa-solid fa-plus"></i>
     </button>
 
-    <!-- Notifications -->
     <button id="footerNotifications" class="hover:scale-125 transition relative">
       <i class="fa-solid fa-bell"></i>
       <span id="notifBadge" class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full hidden">0</span>
     </button>
 
-    <!-- Account -->
     <button id="footerAccount" class="hover:scale-125 transition">
       <i class="fa-solid fa-user-circle"></i>
     </button>
   </div>
 
-  <!-- Toast -->
   <div id="toast" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-full text-sm z-50">
     Login Required
   </div>
 `;
 
-// ✅ Toast function
+// Toast
 function showToast(message) {
   const toast = document.getElementById("toast");
   toast.textContent = message;
@@ -67,22 +59,19 @@ function showToast(message) {
   setTimeout(() => toast.classList.add("hidden"), 2000);
 }
 
-// ✅ Button actions
+// Footer actions
 document.getElementById("footerBookmarks").addEventListener("click", () => {
   if (!loggedIn) return showToast("Login Required");
   window.location.href = "bookmarks.html";
 });
-
 document.getElementById("footerSubmit").addEventListener("click", () => {
   if (!loggedIn) return showToast("Login Required");
   window.location.href = "submit.html";
 });
-
 document.getElementById("footerNotifications").addEventListener("click", () => {
   if (!loggedIn) return showToast("Login Required");
   window.location.href = "notifications.html";
 });
-
 document.getElementById("footerAccount").addEventListener("click", () => {
   if (!loggedIn) {
     window.location.href = "login.html";
@@ -93,11 +82,10 @@ document.getElementById("footerAccount").addEventListener("click", () => {
   }
 });
 
-// ✅ Firebase auth listener
+// Firebase auth listener
 onAuthStateChanged(auth, (user) => {
   loggedIn = !!user;
   const accountBtn = document.getElementById("footerAccount");
-
   if (loggedIn) {
     const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff`;
     accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white" alt="Profile">`;
@@ -106,7 +94,7 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// ✅ Hide footer while scrolling
+// Hide footer on scroll
 let scrollTimeout;
 let lastScrollTop = 0;
 const footer = document.getElementById("floatingFooter");
@@ -115,16 +103,13 @@ window.addEventListener("scroll", () => {
   const scrollTop = window.scrollY;
 
   if (scrollTop > lastScrollTop) {
-    // Scrolling down → hide footer
     footer.classList.add("hidden-footer");
   } else {
-    // Scrolling up → show footer
     footer.classList.remove("hidden-footer");
   }
 
-  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scroll
+  lastScrollTop = Math.max(scrollTop, 0);
 
-  // Show footer after scroll stops
   clearTimeout(scrollTimeout);
   scrollTimeout = setTimeout(() => {
     footer.classList.remove("hidden-footer");
