@@ -167,16 +167,18 @@ function displayPosts(posts) {
             <h2 class="text-lg font-bold text-green-300 mb-2">${post.title.rendered}</h2>
             <p class="text-sm text-gray-300 mb-2">${stripHTML(post.excerpt.rendered).slice(0, 100)}...</p>
             
-            <div class="flex items-center gap-4 text-xs text-gray-400 italic mb-3">
-              <span class="flex items-center gap-1"><i class="fa fa-user"></i> Admin</span>
-              <span class="flex items-center gap-1"><i class="fa fa-calendar"></i> ${timeAgo(post.date)}</span>
-            </div>
-
-            <div class="flex justify-between items-center text-xs text-gray-400 mt-4 gap-3">
-              <span><i class="fa fa-heart"></i> <small>${likesCount}</small></span>
-              <span><i class="fa fa-comment"></i> <small>${commentsCount}</small></span>
-              <span><i class="fa fa-eye"></i> <small>${viewsCount}</small></span>
-              ${bookmarkBtn}
+            <!-- ✅ Updated Meta Bar -->
+            <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 mt-3 text-xs text-gray-300">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1"><i class="fa fa-user text-green-300"></i> Admin</span>
+                <span class="flex items-center gap-1"><i class="fa fa-calendar text-yellow-300"></i> ${timeAgo(post.date)}</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span><i class="fa fa-heart text-red-400"></i> ${likesCount}</span>
+                <span><i class="fa fa-comment text-blue-300"></i> ${commentsCount}</span>
+                <span><i class="fa fa-eye text-purple-300"></i> ${viewsCount}</span>
+                ${bookmarkBtn}
+              </div>
             </div>
           </div>
         </a>
