@@ -1,19 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Futurastic Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futurastic Blog — Home</title>
   <link rel="stylesheet" href="assets/css/theme.css" />
 </head>
 <body>
   <header id="main-header"></header>
 
-  <section class="hero-section">
-    <h1>Welcome to Futurastic Blog</h1>
-    <p>Premium futuristic vibes. Explore posts and share your ideas.</p>
+  <section class="hero">
+    <div class="hero-card">
+      <span class="btn-pill" style="background:linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.45)); color:#fff; border:0;">Premium Gradient UI</span>
+      <h1>Floaty Glass Navigation. Neon Gradients. Live WordPress Posts.</h1>
+      <p>Drop-in static site for GitHub Pages with a futuristic, premium look. Posts stream in from tamilgeo.wordpress.com.</p>
+      <div style="margin-top:14px; display:flex; gap:.6rem; flex-wrap:wrap">
+        <a class="btn" href="posts.html">View Posts</a>
+        <a class="btn btn-primary" href="submit.html">Submit a Post</a>
+      </div>
+    </div>
   </section>
 
+  <div class="container">
+    <h2 style="margin: 22px 0 12px;">Highlights</h2>
+    <div class="grid">
+      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Gradient Stage</h3><p>Conic/radial glow layers for a luxe aesthetic.</p></div></div>
+      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Glass Cards</h3><p>Soft borders, blur, and premium depth.</p></div></div>
+      <div class="card"><div class="card-media"><img src="assets/images/default.jpg" alt=""></div><div class="card-body"><h3>Live Posts</h3><p>Pulls WordPress posts including featured images.</p></div></div>
+    </div>
+  </div>
+
+  <footer class="footer">© <span id="y"></span> FuturaPress — Demo mockup</footer>
+
+  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
   <script src="assets/js/header.js"></script>
 </body>
 </html>
