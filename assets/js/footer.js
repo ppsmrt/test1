@@ -11,13 +11,18 @@ document.getElementById("footer").innerHTML = `
     /* Glassmorphism Footer */
     .glass-footer {
       backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(30, 30, 30, 0.4); /* more opaque for visibility */
       border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+    .glass-footer.hidden-footer {
+      transform: translateY(150%);
+      opacity: 0;
     }
   </style>
 
   <!-- Floating Glass Footer -->
-  <div class="glass-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-10 px-6 py-3 rounded-full text-white text-xl z-50 shadow-lg">
+  <div id="floatingFooter" class="glass-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-10 px-6 py-3 rounded-full text-white text-xl z-50 shadow-lg">
 
     <!-- Home -->
     <a href="index.html" class="hover:scale-125 transition">
@@ -99,4 +104,29 @@ onAuthStateChanged(auth, (user) => {
   } else {
     accountBtn.innerHTML = `<i class="fa-solid fa-user-circle"></i>`;
   }
+});
+
+// ✅ Hide footer while scrolling
+let scrollTimeout;
+let lastScrollTop = 0;
+const footer = document.getElementById("floatingFooter");
+
+window.addEventListener("scroll", () => {
+  const scrollTop = window.scrollY;
+
+  if (scrollTop > lastScrollTop) {
+    // Scrolling down → hide footer
+    footer.classList.add("hidden-footer");
+  } else {
+    // Scrolling up → show footer
+    footer.classList.remove("hidden-footer");
+  }
+
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scroll
+
+  // Show footer after scroll stops
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    footer.classList.remove("hidden-footer");
+  }, 400);
 });
