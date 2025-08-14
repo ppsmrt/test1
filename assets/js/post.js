@@ -49,11 +49,42 @@ function hideSpinner() {
   }, 300);
 }
 
+// ✅ Enhance YouTube embeds & blockquotes
+function enhanceContent(html) {
+  let content = html;
+
+  // Style blockquotes
+  content = content.replace(/<blockquote>/g, '<blockquote class="border-l-4 border-green-400 pl-4 italic text-green-200">');
+
+  // Style YouTube embeds
+  content = content.replace(/<iframe.*?youtube\.com.*?<\/iframe>/g, match => {
+    return `
+      <div class="bg-white/5 border border-white/10 rounded-xl p-3 mb-4">
+        <div class="flex items-center gap-2 mb-2 text-green-300">
+          <i class="fa-brands fa-youtube text-red-500 text-lg"></i> YouTube Video
+        </div>
+        ${match}
+      </div>
+    `;
+  });
+
+  return content;
+}
+
 async function fetchAndShowPost() {
   try {
     const postId = new URLSearchParams(window.location.search).get("id");
-    const res = await fetch(`${blogURL}/posts/${postId}?_embed=1`);
-    const post = await res.json();
+
+    // Fetch post
+    const resPost = await fetch(`${blogURL}/posts/${postId}?_embed=1`);
+    const post = await resPost.json();
+
+    // Fetch comment count
+    const resComments = await fetch(`${blogURL}/comments?post=${postId}&per_page=1`);
+    const commentsCount = parseInt(resComments.headers.get("X-WP-Total")) || 0;
+
+    // Likes count if available from API
+    const likesCount = post.likes_count || 0;
 
     const imageUrl = post.jetpack_featured_media_url
       || post._embedded?.["wp:featuredmedia"]?.[0]?.source_url
@@ -63,6 +94,8 @@ async function fetchAndShowPost() {
       `<span class="px-3 py-1 bg-green-900/40 text-green-300 rounded-full text-xs">${cat.name}</span>`
     ).join(" ") || "";
 
+    const authorName = post._embedded?.author?.[0]?.name || "Admin";
+
     postContainer.innerHTML = `
       <!-- Featured Image -->
       <img src="${imageUrl}" class="w-full h-64 object-cover rounded-xl mb-4">
@@ -70,17 +103,19 @@ async function fetchAndShowPost() {
       <!-- Title -->
       <h1 class="text-2xl font-bold text-green-300 mb-3">${post.title.rendered}</h1>
 
-      <!-- Categories -->
-      <div class="flex flex-wrap items-center gap-2 mb-3">${categories}</div>
-
-      <!-- Meta Info -->
-      <div class="flex items-center gap-5 text-xs text-gray-400 mb-4 bg-white/5 px-4 py-2 rounded-lg">
-        <span class="flex items-center gap-1"><i class="fa-solid fa-calendar-days"></i> ${timeAgo(post.date)}</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-clock"></i> ${Math.ceil(stripHTML(post.content.rendered).split(" ").length / 200)} min read</span>
-      </div>
-
       <!-- Content -->
-      <div class="prose prose-invert max-w-none">${post.content.rendered}</div>
+      <div class="prose prose-invert max-w-none mb-6">${enhanceContent(post.content.rendered)}</div>
+
+      <!-- Meta Info Frosted Glass -->
+      <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 flex flex-wrap items-center gap-4 text-sm text-gray-300 border border-white/10">
+        <span class="flex items-center gap-2"><i class="fa-solid fa-user text-green-400"></i> ${authorName}</span>
+        <span class="flex items-center gap-2"><i class="fa-solid fa-calendar-days text-green-400"></i> ${timeAgo(post.date)}</span>
+        <span class="flex items-center gap-2"><i class="fa-solid fa-thumbs-up text-green-400"></i> ${likesCount} Likes</span>
+        <span class="flex items-center gap-2"><i class="fa-solid fa-comment text-green-400"></i> ${commentsCount} Comments</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <i class="fa-solid fa-tags text-green-400"></i> ${categories}
+        </div>
+      </div>
 
       <!-- Social -->
       <div class="flex justify-between items-center text-sm text-gray-400 border-t border-white/10 pt-4 mt-6">
