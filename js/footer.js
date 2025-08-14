@@ -7,6 +7,17 @@ let loggedIn = false;
 
 // ✅ Inject footer HTML
 document.getElementById("footer").innerHTML = `
+  <style>
+    /* 🔥 Pulse animation for Post button */
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 99, 132, 0.7); }
+      50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(255, 99, 132, 1); }
+    }
+    .pulse {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+  </style>
+
   <div class="flex items-center justify-center gap-10 text-white text-xl z-50">
 
     <!-- Home -->
@@ -19,9 +30,11 @@ document.getElementById("footer").innerHTML = `
       <i class="fa fa-bookmark"></i>
     </button>
 
-    <!-- Post (center, bigger) -->
-    <button id="footerSubmit" class="text-4xl hover:scale-125 transition relative -mt-4">
-      <i class="fa fa-plus-circle"></i>
+    <!-- Post (center, big, gradient, pulse) -->
+    <button id="footerSubmit" 
+      class="pulse text-white text-3xl hover:scale-125 transition relative -mt-6 rounded-full p-4 
+      bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 shadow-xl">
+      <i class="fa fa-plus"></i>
     </button>
 
     <!-- Account -->
