@@ -160,6 +160,13 @@ function displayPosts(posts) {
           <div class="p-4">
             <h2 class="text-lg font-bold text-green-300 mb-2">${post.title.rendered}</h2>
             <p class="text-sm text-gray-300 mb-2">${stripHTML(post.excerpt.rendered).slice(0, 100)}...</p>
+            
+            <!-- ✅ Added Admin + Date meta -->
+            <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
+              <span class="flex items-center gap-1"><i class="fa fa-user"></i> Admin</span>
+              <span class="flex items-center gap-1"><i class="fa fa-calendar"></i> ${timeAgo(post.date)}</span>
+            </div>
+
             <div class="flex justify-between items-center text-xs text-gray-400 mt-4 gap-3">
               <span><i class="fa fa-heart"></i> <small>${likesCount}</small></span>
               <span><i class="fa fa-comment"></i> <small>${commentsCount}</small></span>
