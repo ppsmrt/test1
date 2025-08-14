@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post - TamilGeo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ff5f6d, #ffc371);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 70px;
+    }
 
+    /* Header */
+    header {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    /* Post container */
+    .post-container {
+      max-width: 900px;
+      margin: auto;
+      padding: 15px;
+    }
+    .post-image {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .post-title {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .post-meta {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+    .post-content {
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    /* Floating Navigation */
+    nav {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      padding: 10px 25px;
+      border-radius: 50px;
+      display: flex;
+      gap: 25px;
+      z-index: 1000;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.4rem;
+      transition: transform 0.2s;
+    }
+    nav a:hover {
+      transform: scale(1.2);
+    }
+
+    /* Spinner */
+    .spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 70vh;
+    }
+    .spinner div {
+      width: 24px;
+      height: 24px;
+      margin: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+    .spinner div:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .spinner div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes bounce {
+      to { transform: translateY(-12px); opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+
+<header>📰 TamilGeo Post</header>
+
+<div class="post-container" id="postContainer">
+  <!-- Spinner -->
+  <div class="spinner" id="loadingSpinner">
+    <div></div><div></div><div></div>
+  </div>
+</div>
+
+<!-- Floating Navigation -->
+<nav>
+  <a href="index.html"><i class="fa fa-home"></i></a>
+  <a href="#"><i class="fa fa-search"></i></a>
+  <a href="#"><i class="fa fa-user"></i></a>
+</nav>
+
+<script>
+  const postContainer = document.getElementById("postContainer");
+  const spinner = document.getElementById("loadingSpinner");
+
+  // Get post ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const postId = urlParams.get("id");
+
+  async function loadPost() {
+    try {
+      const res = await fetch(`https://public-api.wordpress.com/wp/v2/sites/tamilgeo.wordpress.com/posts/${postId}`);
+      const post = await res.json();
+
+      spinner.style.display = "none"; // Hide spinner
+
+      postContainer.innerHTML = `
+        <img src="${post.jetpack_featured_media_url}" class="post-image" alt="">
+        <div class="post-title">${post.title.rendered}</div>
+        <div class="post-meta">📅 ${new Date(post.date).toLocaleDateString()} | ✍️ TamilGeo</div>
+        <div class="post-content">${post.content.rendered}</div>
+      `;
+    } catch (error) {
+      spinner.innerHTML = "<p>⚠️ Failed to load post.</p>";
+    }
+  }
+
+  loadPost();
+</script>
+
+</body>
+</html>
