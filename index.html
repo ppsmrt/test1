@@ -1,126 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ta">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TamilGeo Posts</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f4f4f4;
-  }
-  header {
-    background: #e91e63;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-size: 1.5em;
-  }
-  #posts {
-    padding: 15px;
-  }
-  .post {
-    background: white;
-    margin-bottom: 15px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .post h2 {
-    margin: 0 0 10px;
-    color: #333;
-  }
-  .post p {
-    color: #555;
-  }
-  /* Floating nav */
-  .floating-nav {
-    position: fixed;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    display: flex;
-    gap: 20px;
-    padding: 10px 20px;
-    border-radius: 50px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  }
-  .floating-nav a {
-    color: #e91e63;
-    font-size: 1.5em;
-    text-decoration: none;
-  }
-  /* Spinner */
-  .spinner {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  .spinner i {
-    font-size: 2em;
-    color: #e91e63;
-    animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TamilGeo Posts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Spinner styles */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-900">
 
-<header>
-  TamilGeo Blog
-</header>
+  <header class="bg-indigo-600 text-white p-4 text-center text-lg font-bold">
+    TamilGeo Latest Posts
+  </header>
 
-<div id="posts">
-  <div class="spinner"><i class="fas fa-spinner"></i></div>
-</div>
+  <!-- Spinner -->
+  <div id="loader" class="spinner"></div>
 
-<!-- Floating Navigation -->
-<div class="floating-nav">
-  <a href="#"><i class="fas fa-home"></i></a>
-  <a href="#"><i class="fas fa-search"></i></a>
-  <a href="#"><i class="fas fa-user"></i></a>
-</div>
+  <!-- Posts container -->
+  <div id="posts" class="max-w-3xl mx-auto p-4 grid gap-4"></div>
 
-<script>
-async function loadPosts() {
-  const rssUrl = "https://tamilgeo.wordpress.com/feed/";
-  const proxy = "https://api.allorigins.win/get?url=" + encodeURIComponent(rssUrl);
+  <script>
+    async function loadPosts() {
+      const postsContainer = document.getElementById("posts");
+      const loader = document.getElementById("loader");
 
-  try {
-    const res = await fetch(proxy);
-    const data = await res.json();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents, "text/xml");
+      try {
+        const rssUrl = encodeURIComponent("https://tamilgeo.wordpress.com/feed/");
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`;
+        
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-    const items = xml.querySelectorAll("item");
-    let html = "";
-    items.forEach(item => {
-      const title = item.querySelector("title").textContent;
-      const link = item.querySelector("link").textContent;
-      const desc = item.querySelector("description").textContent;
-      html += `
-        <div class="post">
-          <h2><a href="${link}" target="_blank">${title}</a></h2>
-          <p>${desc}</p>
-        </div>
-      `;
-    });
+        // Hide loader
+        loader.style.display = "none";
 
-    document.getElementById("posts").innerHTML = html;
-  } catch (error) {
-    document.getElementById("posts").innerHTML = "<p style='text-align:center;color:red;'>Failed to load posts.</p>";
-  }
-}
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(post => {
+            const postCard = document.createElement("div");
+            postCard.className = "bg-white shadow rounded-lg p-4";
 
-loadPosts();
-</script>
+            postCard.innerHTML = `
+              <h2 class="text-xl font-semibold mb-2">
+                <a href="${post.link}" target="_blank" class="text-indigo-600 hover:underline">${post.title}</a>
+              </h2>
+              <p class="text-sm text-gray-500 mb-2">${new Date(post.pubDate).toLocaleDateString()}</p>
+              <p class="text-gray-700">${post.description.replace(/<[^>]+>/g, "").slice(0, 150)}...</p>
+            `;
+
+            postsContainer.appendChild(postCard);
+          });
+        } else {
+          postsContainer.innerHTML = `<p class="text-center text-gray-500">No posts found.</p>`;
+        }
+      } catch (error) {
+        loader.style.display = "none";
+        postsContainer.innerHTML = `<p class="text-center text-red-500">Failed to load posts. Please try again later.</p>`;
+      }
+    }
+
+    loadPosts();
+  </script>
 
 </body>
 </html>
