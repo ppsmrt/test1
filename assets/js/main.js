@@ -133,6 +133,11 @@ function displayPosts(posts) {
       ? `<img src="${imageUrl}" class="w-full h-48 object-cover rounded-t-xl">`
       : `<div class="w-full h-48 bg-gray-700 flex items-center justify-center text-gray-400">No Image</div>`;
 
+    // Dummy counts for now (replace with API values if available)
+    const likesCount = post.likes_count || 0;
+    const commentsCount = post.comment_count || post._embedded?.replies?.[0]?.length || 0;
+    const viewsCount = post.views_count || Math.floor(Math.random() * 500); // Placeholder
+
     const isBookmarked = bookmarkedIds.includes(post.id);
     const bookmarkBtn = `
       <button
@@ -155,16 +160,23 @@ function displayPosts(posts) {
             </p>
           </div>
         </a>
-        <div class="flex justify-between items-center px-4 pb-4 text-xs text-gray-400">
-          <div class="flex items-center gap-4">
-            <span class="flex items-center gap-1">
-              <i class="fa-solid fa-user"></i> Admin
-            </span>
-            <span class="flex items-center gap-1">
-              <i class="fa-solid fa-calendar-days"></i> ${timeAgo(post.date)}
-            </span>
+        <div class="px-4 pb-4 text-xs text-gray-400">
+          <div class="flex items-center gap-4 mb-2">
+            <span class="flex items-center gap-1"><i class="fa-regular fa-heart"></i> ${likesCount}</span>
+            <span class="flex items-center gap-1"><i class="fa-regular fa-comment"></i> ${commentsCount}</span>
+            <span class="flex items-center gap-1"><i class="fa-regular fa-eye"></i> ${viewsCount}</span>
           </div>
-          ${bookmarkBtn}
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-4">
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-user"></i> Admin
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-calendar-days"></i> ${timeAgo(post.date)}
+              </span>
+            </div>
+            ${bookmarkBtn}
+          </div>
         </div>
       </div>`;
   });
@@ -178,22 +190,4 @@ function attachBookmarkEvents() {
     button.addEventListener("click", function (e) {
       e.preventDefault();
       const id = parseInt(this.dataset.id);
-      let bookmarks = JSON.parse(localStorage.getItem("bookmarkedPosts") || "[]");
-
-      const icon = this.querySelector("i");
-      if (bookmarks.includes(id)) {
-        bookmarks = bookmarks.filter(bid => bid !== id);
-        icon.classList.remove("fa-solid");
-        icon.classList.add("fa-regular");
-        this.title = "Add to Bookmarks";
-      } else {
-        bookmarks.push(id);
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid");
-        this.title = "Remove Bookmark";
-      }
-
-      localStorage.setItem("bookmarkedPosts", JSON.stringify(bookmarks));
-    });
-  });
-}
+      let bookmarks = JSON.parse
