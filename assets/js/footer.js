@@ -16,6 +16,16 @@ document.getElementById("footer").innerHTML = `
     .pulse {
       animation: pulseGlow 2s infinite ease-in-out;
     }
+    /* Menu Panel */
+    #menuPanel {
+      transition: transform 0.3s ease-in-out;
+    }
+    #menuPanel.hidden {
+      transform: translateY(100%);
+    }
+    #menuPanel.visible {
+      transform: translateY(0%);
+    }
   </style>
 
   <div class="fixed bottom-0 left-0 w-full flex items-center justify-center gap-10 bg-black/80 py-3 text-white text-xl z-50">
@@ -30,7 +40,7 @@ document.getElementById("footer").innerHTML = `
       <i class="fa-solid fa-bookmark"></i>
     </button>
 
-    <!-- Post (center, big, gradient, pulse) -->
+    <!-- Post -->
     <button id="footerSubmit" 
       class="pulse text-white text-3xl hover:scale-125 transition relative -mt-8 rounded-full p-4 
       bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 shadow-xl">
@@ -41,6 +51,24 @@ document.getElementById("footer").innerHTML = `
     <button id="footerAccount" class="hover:scale-125 transition">
       <i class="fa-solid fa-user-circle"></i>
     </button>
+
+    <!-- Menu -->
+    <button id="footerMenu" class="hover:scale-125 transition">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Menu Panel -->
+  <div id="menuPanel" class="fixed bottom-0 left-0 w-full bg-black/95 text-white p-6 hidden">
+    <h2 class="text-lg font-bold mb-4">📂 Pages</h2>
+    <ul class="space-y-3">
+      <li><a href="about.html" class="hover:underline">About Us</a></li>
+      <li><a href="contact.html" class="hover:underline">Contact</a></li>
+      <li><a href="categories.html" class="hover:underline">Categories</a></li>
+      <li><a href="privacy.html" class="hover:underline">Privacy Policy</a></li>
+      <li><a href="terms.html" class="hover:underline">Terms & Conditions</a></li>
+    </ul>
+    <button id="closeMenu" class="mt-6 w-full py-2 bg-red-500 rounded-lg">Close</button>
   </div>
 
   <!-- Toast -->
@@ -76,6 +104,17 @@ document.getElementById("footerAccount").addEventListener("click", () => {
       signOut(auth);
     }
   }
+});
+
+// ✅ Menu Toggle
+const menuPanel = document.getElementById("menuPanel");
+document.getElementById("footerMenu").addEventListener("click", () => {
+  menuPanel.classList.remove("hidden");
+  setTimeout(() => menuPanel.classList.add("visible"), 10);
+});
+document.getElementById("closeMenu").addEventListener("click", () => {
+  menuPanel.classList.remove("visible");
+  setTimeout(() => menuPanel.classList.add("hidden"), 300);
 });
 
 // ✅ Firebase auth listener
