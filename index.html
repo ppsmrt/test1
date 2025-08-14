@@ -41,14 +41,17 @@
   <div id="shared-header"></div>
 
   <!-- ✅ Search Input -->
-  <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-6">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="🔍 Search TamilGeo posts..."
-      class="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 shadow-inner focus:outline-none focus:ring-4 focus:ring-green-400 placeholder-gray-300 text-white"
-    />
-  </div>
+<div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-6 relative">
+  <i class="fa fa-search absolute left-8 top-1/2 transform -translate-y-1/2 text-gray-300"></i>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search TamilGeo posts..."
+    class="w-full pl-12 pr-5 py-3 rounded-xl bg-white/10 border border-white/20 shadow-inner 
+           focus:outline-none focus:ring-4 focus:ring-green-400 placeholder-gray-300 text-white"
+  />
+</div>
+
 
   <!-- ✅ Post Grid -->
   <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 flex-grow max-w-7xl mx-auto" id="posts-container">
