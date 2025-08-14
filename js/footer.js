@@ -5,9 +5,9 @@ import { getAuth, signOut, onAuthStateChanged }
 const auth = getAuth();
 let loggedIn = false;
 
-// ✅ Inject minimal footer HTML
+// ✅ Inject footer HTML
 document.getElementById("footer").innerHTML = `
-  <div class="flex items-center justify-around w-full bg-gradient-to-r from-green-600 via-emerald-500 to-green-700 px-5 py-3 rounded-full shadow-xl text-white text-lg backdrop-blur-lg border border-white/10">
+  <div class="flex items-center justify-center gap-10 text-white text-xl z-50">
 
     <!-- Home -->
     <a href="index.html" class="hover:scale-125 transition">
@@ -19,8 +19,8 @@ document.getElementById("footer").innerHTML = `
       <i class="fa fa-bookmark"></i>
     </button>
 
-    <!-- Post -->
-    <button id="footerSubmit" class="hover:scale-125 transition">
+    <!-- Post (center, bigger) -->
+    <button id="footerSubmit" class="text-4xl hover:scale-125 transition relative -mt-4">
       <i class="fa fa-plus-circle"></i>
     </button>
 
