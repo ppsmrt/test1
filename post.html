@@ -3,20 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Latest Posts</title>
-  <link rel="stylesheet" href="assets/css/theme.css" />
-</head>
-<body>
+  <title>TamilGeo - Post</title>
   
-<!-- ✅ Shared Header -->
-  <div id="shared-header"></div>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <main>
-   <div id="post-container" class="grid-layout"></div>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+
+  <!-- Optional header injection -->
+  <div id="header"></div>
+
+  <!-- Post Content -->
+  <main id="post-container" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="text-center text-gray-400">Loading post...</div>
   </main>
 
+  <!-- Floating Footer -->
+  <footer id="footer" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/10 shadow-lg rounded-full px-6 py-3 flex items-center justify-between gap-6 text-white/90 z-50">
+    <!-- Footer content injected by footer.js -->
+  </footer>
+
+  <!-- Scripts -->
   <script src="assets/js/header.js"></script>
-  <script src="assets/js/post.js"></script>
+  <script type="module" src="assets/js/post.js"></script>
   <script src="assets/js/footer.js"></script>
 </body>
 </html>
