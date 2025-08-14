@@ -5,44 +5,28 @@ import { getAuth, signOut, onAuthStateChanged }
 const auth = getAuth();
 let loggedIn = false;
 
-// ✅ Inject Footer HTML
+// ✅ Inject minimal footer HTML
 document.getElementById("footer").innerHTML = `
-  <div class="flex items-center justify-between w-full bg-gradient-to-r from-green-600 via-emerald-500 to-green-700 px-6 py-3 rounded-full shadow-xl text-white text-sm backdrop-blur-lg border border-white/10">
-    
+  <div class="flex items-center justify-around w-full bg-gradient-to-r from-green-600 via-emerald-500 to-green-700 px-5 py-3 rounded-full shadow-xl text-white text-lg backdrop-blur-lg border border-white/10">
+
     <!-- Home -->
-    <a href="index.html" class="flex flex-col items-center hover:scale-110 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z" />
-      </svg>
-      Home
+    <a href="index.html" class="hover:scale-125 transition">
+      <i class="fa fa-home"></i>
     </a>
 
     <!-- Bookmarks -->
-    <button id="footerBookmarks" class="flex flex-col items-center hover:scale-110 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
-      </svg>
-      Bookmarks
+    <button id="footerBookmarks" class="hover:scale-125 transition">
+      <i class="fa fa-bookmark"></i>
     </button>
 
-    <!-- Submit -->
-    <button id="footerSubmit" class="flex flex-col items-center hover:scale-110 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 4v16m8-8H4" />
-      </svg>
-      Submit
+    <!-- Post -->
+    <button id="footerSubmit" class="hover:scale-125 transition">
+      <i class="fa fa-plus-circle"></i>
     </button>
 
     <!-- Account -->
-    <button id="footerAccount" class="flex flex-col items-center hover:scale-110 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      Account
+    <button id="footerAccount" class="hover:scale-125 transition">
+      <i class="fa fa-user-circle"></i>
     </button>
   </div>
 
@@ -87,18 +71,9 @@ onAuthStateChanged(auth, (user) => {
   const accountBtn = document.getElementById("footerAccount");
 
   if (loggedIn) {
-    const photoURL = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=random&color=fff";
-    accountBtn.innerHTML = `
-      <img src="${photoURL}" class="h-6 w-6 mb-1 rounded-full border border-white" alt="Profile">
-      Logout
-    `;
+    const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff`;
+    accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white" alt="Profile">`;
   } else {
-    accountBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      Account
-    `;
+    accountBtn.innerHTML = `<i class="fa fa-user-circle"></i>`;
   }
 });
