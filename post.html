@@ -5,40 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TamilGeo - Post</title>
   
-  <!-- Tailwind CSS -->
+  <!-- ✅ Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font Awesome -->
+  <!-- ✅ Font Awesome 6.5.2 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- ✅ Match Index.html Styles -->
+  <style>
+    .floating-footer {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .card {
+      transition: all 0.4s ease;
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
+      border-color: rgba(0,255,200,0.4);
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen flex flex-col font-sans">
 
-  <!-- Optional header injection -->
-  <div id="header"></div>
+  <!-- ✅ Shared Header -->
+  <div id="shared-header"></div>
 
-  <!-- Spinner -->
+  <!-- ✅ Spinner -->
   <div id="spinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/60 backdrop-blur-md z-50">
     <div class="p-6 rounded-full bg-white/10 border border-green-400/40 shadow-lg shadow-green-500/20 text-green-300 animate-spin">
       <i class="fa-solid fa-circle-notch fa-2x"></i>
     </div>
   </div>
 
-  <!-- Post Content -->
-  <main id="post-container" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- ✅ Post Content -->
+  <main id="post-container" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow">
     <div class="text-center text-gray-400">Loading post...</div>
   </main>
 
-  <!-- Floating Footer -->
-  <footer id="footer" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/10 shadow-lg rounded-full px-6 py-3 flex items-center justify-between gap-6 text-white/90 z-50">
-    <!-- Footer content injected by footer.js -->
+  <!-- ✅ Floating Footer -->
+  <footer id="footer" class="floating-footer fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg flex items-center gap-3 text-sm text-white/90 z-50">
+    <!-- Injected by footer.js -->
   </footer>
 
-  <!-- Scripts -->
-  <script src="assets/js/header.js"></script>
+  <!-- ✅ Scripts -->
+  <script type="module" src="assets/js/header.js"></script>
   <script type="module" src="assets/js/post.js"></script>
-  <script src="assets/js/footer.js"></script>
+  <script type="module" src="assets/js/footer.js"></script>
 </body>
 </html>
