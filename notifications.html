@@ -6,18 +6,6 @@
 <title>Notifications</title>
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<style>
-.toast {
-  animation: slideIn 0.5s ease, fadeOut 0.5s ease forwards;
-}
-@keyframes slideIn {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-@keyframes fadeOut {
-  to { opacity: 0; transform: translateY(20px); }
-}
-</style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-green-900 to-black text-white min-h-screen p-4">
 
@@ -25,13 +13,15 @@
     <i class="fa-solid fa-bell"></i> Notifications
 </h1>
 
-<div id="toast-container" class="fixed bottom-4 right-4 space-y-3 z-50"></div>
+<!-- Notifications List -->
+<div id="notifications-list" class="space-y-4"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
     authDomain: "tamilgeoapp.firebaseapp.com",
@@ -42,49 +32,56 @@ const firebaseConfig = {
     appId: "1:1092623024431:web:ea455dd68a9fcf480be1da"
 };
 
+// Init Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-const toastContainer = document.getElementById("toast-container");
+const notificationsList = document.getElementById("notifications-list");
 
-function showToast(notifId, title, message, link) {
-    const toast = document.createElement("div");
-    toast.className = "toast bg-green-800/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-green-500 text-white max-w-xs";
-    
-    toast.innerHTML = `
-        <div class="flex justify-between items-start">
-            <div>
-                <h2 class="font-bold text-lg">${title}</h2>
-                <p class="text-sm opacity-90">${message}</p>
-                ${link ? `<a href="${link}" target="_blank" class="text-green-300 underline mt-2 block">Read more</a>` : ""}
+// Render Notifications
+function renderNotifications(notifications, userId) {
+    notificationsList.innerHTML = "";
+
+    // Sort newest first (requires timestamp in Firebase)
+    const sorted = Object.entries(notifications).sort(([, a], [, b]) => 
+        (b.timestamp || 0) - (a.timestamp || 0)
+    );
+
+    sorted.forEach(([id, notif]) => {
+        if (notif.dismissedBy && notif.dismissedBy[userId]) return;
+
+        const card = document.createElement("div");
+        card.className = "bg-green-800/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-green-500";
+
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="font-bold text-lg">${notif.title}</h2>
+                    <p class="text-sm opacity-90">${notif.message}</p>
+                    ${notif.link ? `<a href="${notif.link}" target="_blank" class="text-green-300 underline mt-2 block">Read more</a>` : ""}
+                </div>
+                <button class="ml-2 text-red-400 hover:text-red-600" title="Dismiss">
+                    <i class="fa-solid fa-times"></i>
+                </button>
             </div>
-            <button class="ml-2 text-red-400 hover:text-red-600" title="Dismiss">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-    `;
+        `;
 
-    toast.querySelector("button").addEventListener("click", () => {
-        toast.remove();
-        markDismissed(notifId);
+        // Dismiss handler
+        card.querySelector("button").addEventListener("click", () => {
+            set(ref(db, `notifications/${id}/dismissedBy/${userId}`), true);
+        });
+
+        notificationsList.appendChild(card);
     });
 
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-        toast.remove();
-        markDismissed(notifId);
-    }, 8000);
-}
-
-function markDismissed(notifId) {
-    const user = auth.currentUser;
-    if (user) {
-        set(ref(db, `notifications/${notifId}/dismissedBy/${user.uid}`), true);
+    // If no notifications
+    if (!notificationsList.hasChildNodes()) {
+        notificationsList.innerHTML = `<p class="text-gray-400">No notifications to show</p>`;
     }
 }
 
+// Auth state
 onAuthStateChanged(auth, user => {
     if (!user) {
         alert("Please log in to view notifications.");
@@ -92,14 +89,10 @@ onAuthStateChanged(auth, user => {
         return;
     }
 
-    // Load ALL notifications, not just new ones
+    // Live updates from Firebase
     onValue(ref(db, "notifications"), snapshot => {
         const data = snapshot.val() || {};
-        Object.entries(data).forEach(([id, notif]) => {
-            if (!notif.dismissedBy || !notif.dismissedBy[user.uid]) {
-                showToast(id, notif.title, notif.message, notif.link);
-            }
-        });
+        renderNotifications(data, user.uid);
     });
 });
 </script>
