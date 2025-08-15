@@ -28,7 +28,7 @@ function adjustPadding() {
 window.addEventListener("resize", adjustPadding);
 adjustPadding();
 
-// Add loading spinner
+// Add loading spinner for post
 container.innerHTML = `
   <div class="flex justify-center items-center h-64">
     <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-300 h-16 w-16"></div>
@@ -41,6 +41,19 @@ container.innerHTML = `
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   </style>
 `;
@@ -137,10 +150,18 @@ function addComment() {
 }
 
 function loadComments() {
+  const commentsDiv = document.getElementById("comments");
+  
+  // Show loader first
+  commentsDiv.innerHTML = `
+    <div class="flex justify-center items-center h-16">
+      <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-300 h-8 w-8"></div>
+    </div>
+  `;
+
   const commentRef = ref(db, `comments/post_${postId}`);
   onValue(commentRef, snapshot => {
-    const commentsDiv = document.getElementById("comments");
-    commentsDiv.innerHTML = "";
+    commentsDiv.innerHTML = ""; // clear loader
     if (snapshot.exists()) {
       const comments = snapshot.val();
       Object.values(comments).forEach(comment => {
