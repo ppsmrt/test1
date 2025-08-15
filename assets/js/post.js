@@ -189,3 +189,6 @@ onAuthStateChanged(auth, user => {
     postContainer.insertAdjacentHTML("beforeend", renderCommentSection(""));  
     document.getElementById("submit-comment").addEventListener("click", () => alert("Please log in to comment."));  
   }  
+
+  // Bottom spacer to
+
