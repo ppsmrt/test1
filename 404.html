@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found | TamilGeo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .floating-emoji {
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(15deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    .bounce {
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .mascot {
+      position: absolute;
+      width: 60px;
+      animation: floatMascot 6s ease-in-out infinite;
+    }
+
+    @keyframes floatMascot {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(50px, -20px) rotate(15deg); }
+      50% { transform: translate(-50px, -40px) rotate(-15deg); }
+      75% { transform: translate(30px, 10px) rotate(10deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4 relative">
+
+  <!-- Mascot -->
+  <img src="https://i.ibb.co/4fD5gHc/tamilgeo-mascot.png" alt="TamilGeo Mascot" class="mascot">
+
+  <div class="bg-white/5 p-8 rounded-2xl shadow-lg max-w-md w-full text-center backdrop-blur-md relative z-10">
+    <h1 class="text-6xl font-extrabold mb-4 text-pink-500">
+      404 <span class="floating-emoji">🌀</span>
+    </h1>
+    <h2 class="text-2xl font-semibold mb-4">Page Not Found</h2>
+    <p class="text-gray-400 mb-6">
+      Oops! The page you are looking for does not exist.<br>
+      It might have been removed or the URL is incorrect.
+    </p>
+    <a href="/" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600 transition bounce">
+      🔙 Go Back Home
+    </a>
+  </div>
+
+</body>
+</html>
