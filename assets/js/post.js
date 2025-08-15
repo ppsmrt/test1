@@ -144,6 +144,9 @@ async function fetchAndShowPost() {
           </a>
         </div>
       </div>
+
+      <!-- Spacer to prevent overlap with floating bar -->
+      <div class="h-24"></div>
     `;
 
     // ✅ Real-time listener for likes
