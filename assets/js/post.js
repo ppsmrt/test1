@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, get, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, remove, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // ✅ Firebase Config
 const firebaseConfig = {
@@ -168,6 +168,19 @@ function renderLikeSection(postKey, commentsCount, categories, authorName, postD
   `;
 }
 
+// ✅ Render Comment Section
+function renderCommentSection(userName = "") {
+  return `
+    <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 text-sm text-gray-300 border border-white/10 mt-6 space-y-3">
+      <h2 class="text-green-300 font-semibold text-lg mb-2">Leave a Comment</h2>
+      <textarea id="comment-text" placeholder="Your comment..." class="w-full p-3 rounded-lg bg-green-900/20 border border-green-400 text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-400" rows="4"></textarea>
+      <input type="text" id="comment-name" placeholder="Full Name" class="w-full p-3 rounded-lg bg-green-900/20 border border-green-400 text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-400" value="${userName}">
+      <button id="submit-comment" class="px-4 py-2 bg-green-400 text-green-900 font-semibold rounded-lg hover:bg-green-500 transition">Submit</button>
+    </div>
+  `;
+}
+
+// ✅ Fetch and show post
 async function fetchAndShowPost() {
   try {
     const postId = new URLSearchParams(window.location.search).get("id");
@@ -202,26 +215,16 @@ async function fetchAndShowPost() {
       const likeBtn = document.getElementById("like-btn");
       if (user) {
         likeBtn.addEventListener("click", () => toggleLike(postKey, user.uid));
+
+        // Render comment section with user name
+        postContainer.insertAdjacentHTML("beforeend", renderCommentSection(user.displayName || ""));
+        document.getElementById("submit-comment").addEventListener("click", () => submitComment(postKey, user.uid));
       } else {
         likeBtn.addEventListener("click", () => alert("Please log in to like posts."));
+
+        // Render comment section without prefilled name
+        postContainer.insertAdjacentHTML("beforeend", renderCommentSection(""));
+        document.getElementById("submit-comment").addEventListener("click", () => alert("Please log in to comment."));
       }
-    });
 
-    hideSpinner();
-  } catch (err) {
-    console.error("Error loading post:", err);
-    postContainer.innerHTML = `<p class="text-red-400 text-center">Error loading post.</p>`;
-    hideSpinner();
-  }
-}
-
-function sharePost(url) {
-  if (navigator.share) {
-    navigator.share({ title: "Check this out", url })
-      .catch(err => console.error("Share failed:", err));
-  } else {
-    alert("Sharing not supported on this browser.");
-  }
-}
-
-fetchAndShowPost();
+      // Bottom spacer to
