@@ -22,12 +22,6 @@ const blogURL = "https://public-api.wordpress.com/wp/v2/sites/tamilgeo.wordpress
 const postContainer = document.getElementById("post-container");
 const spinner = document.getElementById("spinner");
 
-function stripHTML(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return div.textContent || div.innerText || "";
-}
-
 function timeAgo(dateString) {
   const now = new Date();
   const postDate = new Date(dateString);
@@ -38,38 +32,57 @@ function timeAgo(dateString) {
   if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
   if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
 
-  return postDate.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
+  return postDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function hideSpinner() {
   spinner.style.opacity = "0";
-  setTimeout(() => {
-    spinner.style.display = "none";
-  }, 300);
+  setTimeout(() => { spinner.style.display = "none"; }, 300);
 }
 
-// ✅ Enhance YouTube embeds & blockquotes
+// ✅ Enhance content: typography, YouTube fix, quotes, separators, images
 function enhanceContent(html) {
   let content = html;
+
+  // Headings styled to match theme
+  content = content
+    .replace(/<h1>/g, '<h1 class="text-3xl font-bold text-green-300 mb-4">')
+    .replace(/<h2>/g, '<h2 class="text-2xl font-bold text-green-300 mt-6 mb-3">')
+    .replace(/<h3>/g, '<h3 class="text-xl font-semibold text-green-200 mt-5 mb-2">')
+    .replace(/<h4>/g, '<h4 class="text-lg font-semibold text-green-200 mt-4 mb-2">')
+    .replace(/<h5>/g, '<h5 class="text-base font-semibold text-green-200 mt-3 mb-1">');
 
   // Style blockquotes
   content = content.replace(/<blockquote>/g, '<blockquote class="border-l-4 border-green-400 pl-4 italic text-green-200 bg-green-900/20 rounded-lg py-2">');
 
-  // Responsive YouTube embeds
-  content = content.replace(/<iframe.*?youtube\.com.*?<\/iframe>/g, match => {
+  // Make all images uniform inside a styled box
+  content = content.replace(/<img(.*?)>/g, '<div class="bg-white/5 border border-white/10 rounded-xl p-2 mb-4"><img$1 class="rounded-lg object-cover w-full h-[300px] sm:h-[200px]" /></div>');
+
+  // Responsive YouTube embeds (strip inline width/height)
+  content = content.replace(/<iframe[^>]*youtube\.com[^>]*><\/iframe>/g, match => {
+    let cleaned = match
+      .replace(/width="\d+"/gi, 'width="100%"')
+      .replace(/height="\d+"/gi, '')
+      .replace(/style="[^"]*"/gi, '');
+
     return `
       <div class="bg-white/5 border border-white/10 rounded-xl p-3 mb-4">
         <div class="flex items-center gap-2 mb-2 text-green-300">
           <i class="fa-brands fa-youtube text-red-500 text-lg"></i> YouTube Video
         </div>
-        <div class="video-wrapper">${match}</div>
+        <div class="video-wrapper">${cleaned}</div>
       </div>
     `;
   });
+
+  // Split paragraphs by custom separator (e.g., |||)
+  content = content.replace(/(\|\|\|+)/g, '§§§SPLIT§§§'); // temporary unique marker
+  if (content.includes("§§§SPLIT§§§")) {
+    const parts = content.split("§§§SPLIT§§§").map(part => {
+      return `<div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 leading-relaxed">${part.trim()}</div>`;
+    });
+    content = parts.join("");
+  }
 
   return content;
 }
@@ -78,11 +91,7 @@ function enhanceContent(html) {
 function toggleLike(postId, uid) {
   const likeRef = ref(db, `likes/${postId}/${uid}`);
   get(likeRef).then(snapshot => {
-    if (snapshot.exists()) {
-      remove(likeRef);
-    } else {
-      set(likeRef, true);
-    }
+    snapshot.exists() ? remove(likeRef) : set(likeRef, true);
   });
 }
 
@@ -115,7 +124,6 @@ async function fetchAndShowPost() {
     ).join(" ") || "";
 
     const authorName = post._embedded?.author?.[0]?.name || "Admin";
-
     const postKey = `post_${postId}`;
 
     postContainer.innerHTML = `
@@ -151,10 +159,8 @@ async function fetchAndShowPost() {
       </div>
     `;
 
-    // Listen for likes
     listenLikes(postKey);
 
-    // Like button
     onAuthStateChanged(auth, user => {
       const likeBtn = document.getElementById("like-btn");
       if (user) {
@@ -174,10 +180,8 @@ async function fetchAndShowPost() {
 
 function sharePost(url) {
   if (navigator.share) {
-    navigator.share({
-      title: "Check this out",
-      url
-    }).catch(err => console.error("Share failed:", err));
+    navigator.share({ title: "Check this out", url })
+      .catch(err => console.error("Share failed:", err));
   } else {
     alert("Sharing not supported on this browser.");
   }
