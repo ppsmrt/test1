@@ -1,9 +1,13 @@
 // footer.js
 import { getAuth, onAuthStateChanged } 
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, onValue } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const auth = getAuth();
+const db = getDatabase();
 let loggedIn = false;
+let detachNotif = null; // to clean up old listeners on auth change
 
 document.getElementById("footer").innerHTML = `
   <style>
@@ -38,7 +42,7 @@ document.getElementById("footer").innerHTML = `
 
     <button id="footerNotifications" class="hover:scale-125 transition relative">
       <i class="fa-solid fa-bell"></i>
-      <span id="notifBadge" class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full hidden">0</span>
+      <span id="notifBadge" class="absolute -top-1 -right-2 bg-red-500 text-xs leading-none px-1.5 py-0.5 rounded-full hidden min-w-[18px] text-center">0</span>
     </button>
 
     <button id="footerAccount" class="hover:scale-125 transition">
@@ -80,9 +84,50 @@ document.getElementById("footerAccount").addEventListener("click", () => {
   }
 });
 
-// Firebase auth listener (only sets loggedIn, icon stays same)
+// Helper: update the red badge
+function setBadge(count) {
+  const badge = document.getElementById("notifBadge");
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove("hidden");
+  } else {
+    badge.textContent = "0";
+    badge.classList.add("hidden");
+  }
+}
+
+// Firebase auth listener (only sets loggedIn + wires live notif count)
 onAuthStateChanged(auth, (user) => {
   loggedIn = !!user;
+
+  // Clean up previous notifications listener when user changes/logs out
+  if (detachNotif && typeof detachNotif === "function") {
+    detachNotif();
+    detachNotif = null;
+  }
+
+  if (!loggedIn) {
+    setBadge(0);
+    return;
+  }
+
+  // Live count of undismissed notifications for this user
+  const notifRef = ref(db, "notifications");
+  detachNotif = onValue(notifRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    let count = 0;
+    const uid = auth.currentUser?.uid;
+
+    // Count notifications that the user hasn't dismissed
+    for (const key in data) {
+      const n = data[key];
+      const dismissed = n?.dismissedBy && uid ? !!n.dismissedBy[uid] : false;
+      if (!dismissed) count++;
+    }
+
+    setBadge(count);
+  });
 });
 
 // Hide footer on scroll
