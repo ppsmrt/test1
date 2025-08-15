@@ -41,20 +41,32 @@
   <!-- ✅ Shared Header -->
   <div id="shared-header"></div>
 
-    <!-- Manual Notification -->
-    <label class="block mb-2 text-sm">Title</label>
+    <!-- Full-width form container -->
+<div class="w-screen max-w-full p-6 bg-gray-900/90 backdrop-blur-md flex flex-col items-center">
+  <h1 class="text-2xl font-bold mb-6 text-white">Notifications</h1>
+
+  <!-- Manual Notification Form -->
+  <div class="w-full max-w-3xl">
+    <label class="block mb-2 text-sm text-white">Title</label>
     <input type="text" id="notif-title" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification title">
 
-    <label class="block mb-2 text-sm">Message</label>
+    <label class="block mb-2 text-sm text-white">Message</label>
     <textarea id="notif-message" rows="4" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification message"></textarea>
 
-    <label class="block mb-2 text-sm">Optional Link</label>
+    <label class="block mb-2 text-sm text-white">Optional Link</label>
     <input type="url" id="notif-link" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="https://...">
 
     <button id="send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-all mb-4">
         <i class="fa-solid fa-paper-plane"></i> Send Notification
     </button>
 
+    <button id="sync-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all">
+        <i class="fa-brands fa-wordpress"></i> Sync Latest Blog Posts
+    </button>
+
+    <p id="status" class="mt-4 text-sm text-white"></p>
+  </div>
+</div>
     <!-- Sync WordPress Posts -->
     <button id="sync-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all">
         <i class="fa-brands fa-wordpress"></i> Sync Latest Blog Posts
