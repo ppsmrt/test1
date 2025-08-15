@@ -1,7 +1,7 @@
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Firebase Config
 const firebaseConfig = {
@@ -20,6 +20,22 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 
+// Toast Notification Function
+function showToast(message, type = "error") {
+  const toast = document.createElement("div");
+  toast.className = `fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white 
+                     ${type === "success" ? "bg-green-500" : "bg-red-500"} 
+                     animate-slideUp z-50`;
+  toast.innerText = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(20px)";
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 // Username/Password login
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -27,8 +43,14 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
 
   try {
-    // Step 1: Find the email for the username
+    // Fetch all users
     const usersSnap = await get(ref(db, "users"));
+    if (!usersSnap.exists()) {
+      showToast("No users found in database.");
+      return;
+    }
+
+    // Find email by username
     let foundEmail = null;
     usersSnap.forEach(childSnap => {
       const userData = childSnap.val();
@@ -38,23 +60,24 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     });
 
     if (!foundEmail) {
-      alert("Username not found!");
+      showToast("Username not found!");
       return;
     }
 
-    // Step 2: Login with the found email
+    // Login with found email
     const userCredential = await signInWithEmailAndPassword(auth, foundEmail, password);
     const user = userCredential.user;
 
     await set(ref(db, `users/${user.uid}/lastLogin`), new Date().toISOString());
-    alert("Login successful!");
-    window.location.href = "index.html";
+    showToast("Login successful!", "success");
+    setTimeout(() => (window.location.href = "index.html"), 1000);
+
   } catch (error) {
-    alert(`Login failed: ${error.message}`);
+    showToast(`Login failed: ${error.message}`);
   }
 });
 
-// Google Sign-In (still email-based, but can store username too)
+// Google Sign-In
 document.getElementById("google-login").addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -67,10 +90,10 @@ document.getElementById("google-login").addEventListener("click", async () => {
       lastLogin: new Date().toISOString()
     });
 
-    alert(`Welcome ${user.displayName}!`);
-    window.location.href = "index.html";
+    showToast(`Welcome ${user.displayName}!`, "success");
+    setTimeout(() => (window.location.href = "index.html"), 1000);
   } catch (error) {
-    alert(`Google login failed: ${error.message}`);
+    showToast(`Google login failed: ${error.message}`);
   }
 });
 
