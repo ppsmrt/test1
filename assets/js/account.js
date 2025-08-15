@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, updateEmail, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -53,7 +53,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Handle profile photo upload
+// Handle profile photo upload (FIXED to update Auth & DB)
 document.getElementById("profile-upload").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -75,14 +75,25 @@ document.getElementById("profile-upload").addEventListener("change", async (e) =
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(async (blob) => {
-        const user = auth.currentUser;
-        const storageRef = sRef(storage, "profilePhotos/" + user.uid + ".jpg");
-        await uploadBytes(storageRef, blob);
-        const downloadURL = await getDownloadURL(storageRef);
+        try {
+          const user = auth.currentUser;
+          const storageRef = sRef(storage, "profilePhotos/" + user.uid + ".jpg");
 
-        await update(ref(db, "users/" + user.uid), { photoURL: downloadURL });
-        document.getElementById("profile-pic").src = downloadURL;
-        showToast("Profile photo updated!", "success");
+          await uploadBytes(storageRef, blob);
+          const downloadURL = await getDownloadURL(storageRef);
+
+          // Update Auth profile and Database
+          await updateProfile(user, { photoURL: downloadURL });
+          await update(ref(db, "users/" + user.uid), { photoURL: downloadURL });
+
+          // Trigger footer instant update if needed
+          localStorage.setItem("profileUpdated", "true");
+
+          document.getElementById("profile-pic").src = downloadURL;
+          showToast("Profile photo updated!", "success");
+        } catch (err) {
+          showToast(err.message);
+        }
       }, "image/jpeg", 0.7);
     };
   };
