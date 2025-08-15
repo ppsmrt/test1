@@ -100,23 +100,25 @@ syncBtn.addEventListener("click", async () => {
     statusText.textContent = "⏳ Syncing blog posts...";
     statusText.className = "text-yellow-400";
 
+    const normalizeLink = link => (link || "").replace(/\/$/, "").trim();
+
     try {
-        // Fetch current notifications to avoid duplicates
         const existingSnapshot = await get(ref(db, "notifications"));
         const existingData = existingSnapshot.val() || {};
-        const existingLinks = Object.values(existingData).map(n => n.link);
+        const existingLinks = Object.values(existingData).map(n => normalizeLink(n.link));
 
         const res = await fetch(wordpressURL);
         const posts = await res.json();
 
         let addedCount = 0;
         for (const post of posts) {
-            if (!existingLinks.includes(post.link)) {
+            const postLink = normalizeLink(post.link);
+            if (!existingLinks.includes(postLink)) {
                 const notifRef = push(ref(db, "notifications"));
                 await set(notifRef, {
                     title: post.title.rendered,
                     message: "New blog post available!",
-                    link: post.link,
+                    link: postLink,
                     timestamp: new Date(post.date).getTime()
                 });
                 addedCount++;
