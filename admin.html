@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Send Notifications</title>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-green-900 to-black text-white min-h-screen flex items-center justify-center">
+
+<div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-lg max-w-lg w-full border border-white/20">
+    <h1 class="text-2xl font-bold text-green-300 mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-bell"></i> Admin Notification Panel
+    </h1>
+
+    <!-- Manual Notification -->
+    <label class="block mb-2 text-sm">Title</label>
+    <input type="text" id="notif-title" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification title">
+
+    <label class="block mb-2 text-sm">Message</label>
+    <textarea id="notif-message" rows="4" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification message"></textarea>
+
+    <label class="block mb-2 text-sm">Optional Link</label>
+    <input type="url" id="notif-link" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="https://...">
+
+    <button id="send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-all mb-4">
+        <i class="fa-solid fa-paper-plane"></i> Send Notification
+    </button>
+
+    <!-- Sync WordPress Posts -->
+    <button id="sync-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all">
+        <i class="fa-brands fa-wordpress"></i> Sync Latest Blog Posts
+    </button>
+
+    <p id="status" class="mt-4 text-sm"></p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
+    authDomain: "tamilgeoapp.firebaseapp.com",
+    databaseURL: "https://tamilgeoapp-default-rtdb.firebaseio.com",
+    projectId: "tamilgeoapp",
+    storageBucket: "tamilgeoapp.appspot.com",
+    messagingSenderId: "1092623024431",
+    appId: "1:1092623024431:web:ea455dd68a9fcf480be1da"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const sendBtn = document.getElementById("send-btn");
+const syncBtn = document.getElementById("sync-btn");
+const statusText = document.getElementById("status");
+
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        alert("Please log in as admin to send notifications.");
+        window.location.href = "login.html";
+        return;
+    }
+});
+
+// Send Manual Notification
+sendBtn.addEventListener("click", async () => {
+    const title = document.getElementById("notif-title").value.trim();
+    const message = document.getElementById("notif-message").value.trim();
+    const link = document.getElementById("notif-link").value.trim();
+
+    if (!title || !message) {
+        statusText.textContent = "Title and message are required.";
+        statusText.className = "text-red-400";
+        return;
+    }
+
+    const notifRef = push(ref(db, "notifications"));
+    await set(notifRef, {
+        title,
+        message,
+        link: link || null,
+        timestamp: Date.now()
+    });
+
+    statusText.textContent = "✅ Notification sent successfully!";
+    statusText.className = "text-green-400";
+    document.getElementById("notif-title").value = "";
+    document.getElementById("notif-message").value = "";
+    document.getElementById("notif-link").value = "";
+});
+
+// Sync WordPress Posts
+syncBtn.addEventListener("click", async () => {
+    const wordpressURL = "https://tamilgeo.wordpress.com/wp-json/wp/v2/posts?per_page=5&_fields=title,link,date";
+    statusText.textContent = "⏳ Syncing blog posts...";
+    statusText.className = "text-yellow-400";
+
+    try {
+        // Fetch current notifications to avoid duplicates
+        const existingSnapshot = await get(ref(db, "notifications"));
+        const existingData = existingSnapshot.val() || {};
+        const existingLinks = Object.values(existingData).map(n => n.link);
+
+        const res = await fetch(wordpressURL);
+        const posts = await res.json();
+
+        let addedCount = 0;
+        for (const post of posts) {
+            if (!existingLinks.includes(post.link)) {
+                const notifRef = push(ref(db, "notifications"));
+                await set(notifRef, {
+                    title: post.title.rendered,
+                    message: "New blog post available!",
+                    link: post.link,
+                    timestamp: new Date(post.date).getTime()
+                });
+                addedCount++;
+            }
+        }
+
+        if (addedCount > 0) {
+            statusText.textContent = `✅ Synced ${addedCount} new posts!`;
+            statusText.className = "text-green-400";
+        } else {
+            statusText.textContent = "ℹ No new posts to sync.";
+            statusText.className = "text-blue-400";
+        }
+    } catch (err) {
+        console.error(err);
+        statusText.textContent = "❌ Error syncing blog posts.";
+        statusText.className = "text-red-400";
+    }
+});
+</script>
+</body>
+</html>
