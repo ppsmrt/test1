@@ -25,13 +25,12 @@
     <i class="fa-solid fa-bell"></i> Notifications
 </h1>
 
-<!-- Container for toast notifications -->
 <div id="toast-container" class="fixed bottom-4 right-4 space-y-3 z-50"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, onChildAdded, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
@@ -73,7 +72,6 @@ function showToast(notifId, title, message, link) {
 
     toastContainer.appendChild(toast);
 
-    // Auto-hide after 8 seconds
     setTimeout(() => {
         toast.remove();
         markDismissed(notifId);
@@ -94,15 +92,14 @@ onAuthStateChanged(auth, user => {
         return;
     }
 
-    // Listen for new notifications
-    onChildAdded(ref(db, "notifications"), snapshot => {
-        const notif = snapshot.val();
-        const notifId = snapshot.key;
-
-        // Skip if dismissed
-        if (notif.dismissedBy && notif.dismissedBy[user.uid]) return;
-
-        showToast(notifId, notif.title, notif.message, notif.link);
+    // Load ALL notifications, not just new ones
+    onValue(ref(db, "notifications"), snapshot => {
+        const data = snapshot.val() || {};
+        Object.entries(data).forEach(([id, notif]) => {
+            if (!notif.dismissedBy || !notif.dismissedBy[user.uid]) {
+                showToast(id, notif.title, notif.message, notif.link);
+            }
+        });
     });
 });
 </script>
