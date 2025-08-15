@@ -62,7 +62,7 @@ function enhanceContent(html) {
   content = content.replace(/<iframe[^>]*youtube\.com[^>]*><\/iframe>/g, match => {
     let cleaned = match
       .replace(/width="\d+"/gi, 'width="100%"')
-      .replace(/height="\d+"/gi, 'height="315"') // Default height
+      .replace(/height="\d+"/gi, 'height="315"')
       .replace(/style="[^"]*"/gi, '');
     return `
       <div class="bg-white/5 border border-white/10 rounded-xl p-3 mb-4">
@@ -94,11 +94,31 @@ function enhanceContent(html) {
   return content;
 }
 
-// ✅ Like feature
+// ✅ Like feature with instant icon/color change
 function toggleLike(postId, uid) {
   const likeRef = ref(db, `likes/${postId}/${uid}`);
+  const likeBtn = document.getElementById("like-btn");
+  const likeIcon = document.getElementById("like-icon");
+  const likeCountEl = document.getElementById("like-count");
+
   get(likeRef).then(snapshot => {
-    snapshot.exists() ? remove(likeRef) : set(likeRef, true);
+    let currentCount = parseInt(likeCountEl.textContent) || 0;
+
+    if (snapshot.exists()) {
+      remove(likeRef);
+      likeCountEl.textContent = Math.max(currentCount - 1, 0);
+      likeBtn.classList.remove("text-green-400");
+      likeIcon.classList.replace("fa-solid", "fa-regular");
+    } else {
+      set(likeRef, true);
+      likeCountEl.textContent = currentCount + 1;
+      likeBtn.classList.add("text-green-400");
+      likeIcon.classList.replace("fa-regular", "fa-solid");
+    }
+
+    likeBtn.classList.remove("like-pulse");
+    void likeBtn.offsetWidth; 
+    likeBtn.classList.add("like-pulse");
   });
 }
 
@@ -107,6 +127,18 @@ function listenLikes(postId) {
   onValue(likesRef, snapshot => {
     const data = snapshot.val() || {};
     document.getElementById("like-count").textContent = Object.keys(data).length;
+
+    onAuthStateChanged(auth, user => {
+      const likeBtn = document.getElementById("like-btn");
+      const likeIcon = document.getElementById("like-icon");
+      if (user && data[user.uid]) {
+        likeBtn.classList.add("text-green-400");
+        likeIcon.classList.replace("fa-regular", "fa-solid");
+      } else {
+        likeBtn.classList.remove("text-green-400");
+        likeIcon.classList.replace("fa-solid", "fa-regular");
+      }
+    });
   });
 }
 
@@ -157,7 +189,9 @@ async function fetchAndShowPost() {
       <!-- Social -->
       <div class="flex justify-between items-center text-sm text-gray-400 border-t border-white/10 pt-4 mt-6 mb-20">
         <div class="flex gap-4">
-          <button id="like-btn" class="hover:text-green-400"><i class="fa-solid fa-thumbs-up"></i></button>
+          <button id="like-btn" class="hover:text-green-400 transition" title="Like">
+            <i id="like-icon" class="fa-regular fa-thumbs-up"></i>
+          </button>
           <a href="https://wa.me/?text=${encodeURIComponent(post.link)}" target="_blank" class="hover:text-green-400"><i class="fa-brands fa-whatsapp"></i></a>
           <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(post.link)}" target="_blank" class="hover:text-green-400"><i class="fa-brands fa-facebook"></i></a>
           <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(post.link)}" target="_blank" class="hover:text-green-400"><i class="fa-brands fa-twitter"></i></a>
