@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications</title>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+.toast {
+  animation: slideIn 0.5s ease, fadeOut 0.5s ease forwards;
+}
+@keyframes slideIn {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(20px); }
+}
+</style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-green-900 to-black text-white min-h-screen p-4">
+
+<h1 class="text-2xl font-bold text-green-300 mb-6 flex items-center gap-2">
+    <i class="fa-solid fa-bell"></i> Notifications
+</h1>
+
+<!-- Container for toast notifications -->
+<div id="toast-container" class="fixed bottom-4 right-4 space-y-3 z-50"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, onChildAdded, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
+    authDomain: "tamilgeoapp.firebaseapp.com",
+    databaseURL: "https://tamilgeoapp-default-rtdb.firebaseio.com",
+    projectId: "tamilgeoapp",
+    storageBucket: "tamilgeoapp.appspot.com",
+    messagingSenderId: "1092623024431",
+    appId: "1:1092623024431:web:ea455dd68a9fcf480be1da"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const toastContainer = document.getElementById("toast-container");
+
+function showToast(notifId, title, message, link) {
+    const toast = document.createElement("div");
+    toast.className = "toast bg-green-800/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-green-500 text-white max-w-xs";
+    
+    toast.innerHTML = `
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="font-bold text-lg">${title}</h2>
+                <p class="text-sm opacity-90">${message}</p>
+                ${link ? `<a href="${link}" target="_blank" class="text-green-300 underline mt-2 block">Read more</a>` : ""}
+            </div>
+            <button class="ml-2 text-red-400 hover:text-red-600" title="Dismiss">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    toast.querySelector("button").addEventListener("click", () => {
+        toast.remove();
+        markDismissed(notifId);
+    });
+
+    toastContainer.appendChild(toast);
+
+    // Auto-hide after 8 seconds
+    setTimeout(() => {
+        toast.remove();
+        markDismissed(notifId);
+    }, 8000);
+}
+
+function markDismissed(notifId) {
+    const user = auth.currentUser;
+    if (user) {
+        set(ref(db, `notifications/${notifId}/dismissedBy/${user.uid}`), true);
+    }
+}
+
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        alert("Please log in to view notifications.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Listen for new notifications
+    onChildAdded(ref(db, "notifications"), snapshot => {
+        const notif = snapshot.val();
+        const notifId = snapshot.key;
+
+        // Skip if dismissed
+        if (notif.dismissedBy && notif.dismissedBy[user.uid]) return;
+
+        showToast(notifId, notif.title, notif.message, notif.link);
+    });
+});
+</script>
+
+</body>
+</html>
