@@ -77,7 +77,6 @@ async function likePost(postId, uid) {
     return;
   }
 
-  // Increase like count in transaction style
   const likesRef = ref(db, `likes/post_${postId}`);
   const likesSnap = await get(likesRef);
   const currentLikes = likesSnap.exists() ? likesSnap.val() : 0;
@@ -119,11 +118,30 @@ async function fetchAndShowPost() {
           <i class="fa-solid fa-tags text-green-400"></i> ${categories}
         </div>
       </div>
+
       <div class="flex justify-between items-center text-sm text-gray-400 border-t border-white/10 pt-4 mt-6">
         <div class="flex gap-4">
           <button id="like-btn" class="hover:text-green-400"><i class="fa-solid fa-thumbs-up"></i></button>
           <button class="hover:text-green-400"><i class="fa-solid fa-comment"></i></button>
-          <button onclick="sharePost('${post.link}')" class="hover:text-green-400"><i class="fa-solid fa-share-nodes"></i></button>
+        </div>
+        
+        <!-- Share Buttons -->
+        <div class="flex gap-3">
+          <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(post.title.rendered)}%20${encodeURIComponent(post.link)}" 
+             target="_blank" 
+             class="hover:text-green-400">
+            <i class="fa-brands fa-whatsapp text-green-400"></i>
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(post.link)}" 
+             target="_blank" 
+             class="hover:text-green-400">
+            <i class="fa-brands fa-facebook text-blue-500"></i>
+          </a>
+          <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title.rendered)}&url=${encodeURIComponent(post.link)}" 
+             target="_blank" 
+             class="hover:text-green-400">
+            <i class="fa-brands fa-x-twitter text-white"></i>
+          </a>
         </div>
       </div>
     `;
