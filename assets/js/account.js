@@ -1,5 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, updateEmail, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  updateEmail, 
+  updateProfile, 
+  reload 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -58,7 +64,6 @@ document.getElementById("profile-upload").addEventListener("change", async (e) =
   const file = e.target.files[0];
   if (!file) return;
 
-  // Compress image
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = async (event) => {
@@ -82,14 +87,15 @@ document.getElementById("profile-upload").addEventListener("change", async (e) =
           await uploadBytes(storageRef, blob);
           const downloadURL = await getDownloadURL(storageRef);
 
-          // Update Auth profile and Database
+          // Update Auth & DB
           await updateProfile(user, { photoURL: downloadURL });
           await update(ref(db, "users/" + user.uid), { photoURL: downloadURL });
 
-          // Trigger footer instant update if needed
-          localStorage.setItem("profileUpdated", "true");
+          // Force reload auth user to refresh photoURL
+          await reload(user);
 
           document.getElementById("profile-pic").src = downloadURL;
+          localStorage.setItem("profileUpdated", "true");
           showToast("Profile photo updated!", "success");
         } catch (err) {
           showToast(err.message);
@@ -109,27 +115,6 @@ document.getElementById("save-account").addEventListener("click", async () => {
     await update(ref(db, "users/" + user.uid), { name, email });
     await updateEmail(user, email);
     showToast("Account updated!", "success");
-  } catch (err) {
-    showToast(err.message);
-  }
-});
-
-// Update password
-document.getElementById("update-password").addEventListener("click", async () => {
-  const user = auth.currentUser;
-  const newPass = document.getElementById("new-password").value;
-  const confirmPass = document.getElementById("confirm-password").value;
-
-  if (newPass !== confirmPass) {
-    showToast("Passwords do not match!");
-    return;
-  }
-
-  try {
-    await updatePassword(user, newPass);
-    showToast("Password updated!", "success");
-    document.getElementById("new-password").value = "";
-    document.getElementById("confirm-password").value = "";
   } catch (err) {
     showToast(err.message);
   }
