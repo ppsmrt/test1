@@ -44,7 +44,7 @@ function hideSpinner() {
 function enhanceContent(html) {
   let content = html;
 
-  // Headings styled to match theme
+  // Style headings
   content = content
     .replace(/<h1>/g, '<h1 class="text-3xl font-bold text-green-300 mb-4">')
     .replace(/<h2>/g, '<h2 class="text-2xl font-bold text-green-300 mt-6 mb-3">')
@@ -55,16 +55,15 @@ function enhanceContent(html) {
   // Style blockquotes
   content = content.replace(/<blockquote>/g, '<blockquote class="border-l-4 border-green-400 pl-4 italic text-green-200 bg-green-900/20 rounded-lg py-2">');
 
-  // Make all images uniform inside a styled box
+  // Style images inside a uniform box
   content = content.replace(/<img(.*?)>/g, '<div class="bg-white/5 border border-white/10 rounded-xl p-2 mb-4"><img$1 class="rounded-lg object-cover w-full h-[300px] sm:h-[200px]" /></div>');
 
-  // Responsive YouTube embeds (strip inline width/height)
+  // Make YouTube embeds responsive
   content = content.replace(/<iframe[^>]*youtube\.com[^>]*><\/iframe>/g, match => {
     let cleaned = match
       .replace(/width="\d+"/gi, 'width="100%"')
-      .replace(/height="\d+"/gi, '')
+      .replace(/height="\d+"/gi, 'height="315"') // Default height
       .replace(/style="[^"]*"/gi, '');
-
     return `
       <div class="bg-white/5 border border-white/10 rounded-xl p-3 mb-4">
         <div class="flex items-center gap-2 mb-2 text-green-300">
@@ -75,13 +74,21 @@ function enhanceContent(html) {
     `;
   });
 
-  // Split paragraphs by custom separator (e.g., |||)
-  content = content.replace(/(\|\|\|+)/g, '§§§SPLIT§§§'); // temporary unique marker
-  if (content.includes("§§§SPLIT§§§")) {
-    const parts = content.split("§§§SPLIT§§§").map(part => {
-      return `<div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 leading-relaxed">${part.trim()}</div>`;
-    });
-    content = parts.join("");
+  // Handle custom separators ||| by splitting into cards
+  if (content.includes("|||")) {
+    content = content.split("|||").map(part => {
+      let trimmed = part.trim();
+      if (!trimmed) return "";
+      if (trimmed.includes("<blockquote")) {
+        return `<div class="bg-green-900/20 border-l-4 border-green-400 rounded-lg p-4 mb-4 fade-in">${trimmed}</div>`;
+      } else if (trimmed.match(/<h[1-6]>/)) {
+        return `<div class="mb-4 fade-in">${trimmed}</div>`;
+      } else if (trimmed.includes("<ul") || trimmed.includes("<ol")) {
+        return `<div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 fade-in">${trimmed}</div>`;
+      } else {
+        return `<div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 leading-relaxed fade-in">${trimmed}</div>`;
+      }
+    }).join("");
   }
 
   return content;
