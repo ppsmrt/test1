@@ -1,5 +1,5 @@
 // footer.js
-import { getAuth, signOut, onAuthStateChanged } 
+import { getAuth, onAuthStateChanged } 
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const auth = getAuth();
@@ -76,21 +76,42 @@ document.getElementById("footerAccount").addEventListener("click", () => {
   if (!loggedIn) {
     window.location.href = "login.html";
   } else {
-    if (confirm("Logout from your account?")) {
-      signOut(auth);
-    }
+    window.location.href = "account.html";
   }
 });
 
-// Firebase auth listener
-onAuthStateChanged(auth, (user) => {
-  loggedIn = !!user;
+// Function to update the account icon
+function updateAccountIcon(user) {
   const accountBtn = document.getElementById("footerAccount");
-  if (loggedIn) {
+  if (user) {
     const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff`;
-    accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white" alt="Profile">`;
+    accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white object-cover" alt="Profile">`;
   } else {
     accountBtn.innerHTML = `<i class="fa-solid fa-user-circle"></i>`;
+  }
+}
+
+// Firebase auth listener (updates when user logs in/out or updates profile)
+onAuthStateChanged(auth, async (user) => {
+  loggedIn = !!user;
+  if (loggedIn) {
+    await user.reload(); // Get latest profile data
+    updateAccountIcon(auth.currentUser);
+  } else {
+    updateAccountIcon(null);
+  }
+});
+
+// Listen for storage event (triggered when account.html updates profile)
+window.addEventListener("storage", (event) => {
+  if (event.key === "profileUpdated" && event.newValue === "true") {
+    const user = auth.currentUser;
+    if (user) {
+      user.reload().then(() => {
+        updateAccountIcon(auth.currentUser);
+        localStorage.removeItem("profileUpdated"); // Reset flag
+      });
+    }
   }
 });
 
