@@ -134,70 +134,37 @@ body{
 /* ----- Footer */
 .footer{ text-align:center; padding:40px 16px; color:var(--muted) }
 
-/* ----- Post */
+/* Typography Styles */
 .prose-custom {
   @apply prose prose-invert max-w-none;
 }
+.prose-custom h1 { @apply text-green-300 font-bold border-b border-green-800 pb-1 mb-4; }
+.prose-custom h2 { @apply text-green-200 font-semibold mt-6 mb-2; }
+.prose-custom h3 { @apply text-green-200 font-semibold mt-4 mb-2; }
+.prose-custom h4, .prose-custom h5 { @apply text-green-200 font-medium mt-3 mb-1; }
+.prose-custom p { @apply text-gray-300 leading-relaxed; }
+.prose-custom a { @apply text-green-400 underline hover:text-green-300; }
+.prose-custom ul { @apply list-disc list-inside text-gray-300; }
+.prose-custom ol { @apply list-decimal list-inside text-gray-300; }
 
-.prose-custom h1 {
-  @apply text-green-300 font-bold border-b border-green-800 pb-1 mb-4;
-}
-
-.prose-custom h2 {
-  @apply text-green-200 font-semibold mt-6 mb-2;
-}
-
-.prose-custom h3 {
-  @apply text-green-200 font-semibold mt-4 mb-2;
-}
-
-.prose-custom h4,
-.prose-custom h5 {
-  @apply text-green-200 font-medium mt-3 mb-1;
-}
-
-.prose-custom p {
-  @apply text-gray-300 leading-relaxed;
-}
-
-.prose-custom a {
-  @apply text-green-400 underline hover:text-green-300;
-}
-
-.prose-custom blockquote {
-  @apply border-l-4 border-green-400 pl-4 italic text-green-200 bg-green-900/20 rounded-lg py-2;
-}
-
-.prose-custom ul {
-  @apply list-disc list-inside text-gray-300;
-}
-
-.prose-custom ol {
-  @apply list-decimal list-inside text-gray-300;
-}
-
+/* Uniform Image Box */
 .prose-custom img {
   @apply rounded-xl border border-white/10 shadow-lg bg-white/5 p-2 object-cover w-full max-w-full;
   height: 300px;
 }
-
 @media (max-width: 640px) {
-  .prose-custom img {
-    height: 200px;
-  }
+  .prose-custom img { height: 200px; }
 }
 
-/* ---- Youtube Embedded Video*/
-
+/* Responsive YouTube */
 .video-wrapper {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
   max-width: 100%;
   border-radius: 0.75rem;
 }
-
 .video-wrapper iframe {
   position: absolute;
   top: 0;
