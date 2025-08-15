@@ -3,92 +3,105 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TamilGeo - Admin</title>
+<title>TamilGeo - Admin Panel</title>
 
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
 <style>
-  .card {
-    transition: all 0.3s ease;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 0.5rem;
-  }
-  .card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 255, 200, 0.3);
-  }
+.floating-footer {
+  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.card {
+  transition: all 0.4s ease;
+  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
+  border-color: rgba(0,255,200,0.4);
+}
 </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white font-sans">
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex flex-col min-h-screen font-sans p-4">
 
-<!-- Full-width Notifications Form -->
-<div class="w-screen bg-gray-900/90 p-6 backdrop-blur-md">
-  <h1 class="text-3xl font-bold mb-6 text-white text-center">Notifications</h1>
+<div id="shared-header"></div>
 
-  <div class="w-full max-w-4xl mx-auto">
-    <label class="block mb-2 text-sm text-white">Title</label>
-    <input type="text" id="notif-title" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification title">
+<!-- Manual Notification Form -->
+<div class="mb-8 w-full max-w-screen-lg mx-auto p-4 bg-gray-900/50 rounded-lg">
+<h1 class="text-2xl font-bold mb-4">Send Notification</h1>
+<label class="block mb-2 text-sm">Title</label>
+<input type="text" id="notif-title" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification title">
+<label class="block mb-2 text-sm">Message</label>
+<textarea id="notif-message" rows="4" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification message"></textarea>
+<label class="block mb-2 text-sm">Optional Link</label>
+<input type="url" id="notif-link" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="https://...">
 
-    <label class="block mb-2 text-sm text-white">Message</label>
-    <textarea id="notif-message" rows="4" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="Enter notification message"></textarea>
+<button id="send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-all mb-4">
+  <i class="fa-solid fa-paper-plane"></i> Send Notification
+</button>
 
-    <label class="block mb-2 text-sm text-white">Optional Link</label>
-    <input type="url" id="notif-link" class="w-full p-3 mb-4 bg-white/5 border border-white/20 rounded-lg text-white" placeholder="https://...">
+<button id="sync-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all">
+  <i class="fa-brands fa-wordpress"></i> Sync Latest Blog Posts
+</button>
 
-    <button id="send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-all mb-4">
-        <i class="fa-solid fa-paper-plane"></i> Send Notification
-    </button>
-
-    <button id="sync-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all mb-8">
-        <i class="fa-brands fa-wordpress"></i> Sync Latest Blog Posts
-    </button>
-
-    <p id="status" class="mt-4 text-sm text-white"></p>
-  </div>
+<p id="status" class="mt-4 text-sm"></p>
 </div>
 
-<!-- Manage Notifications Section -->
-<div class="w-screen bg-gray-800/90 p-6 backdrop-blur-md mt-8">
-  <h2 class="text-2xl font-bold mb-4 text-white">Manage Notifications</h2>
-  <div id="notifications-list" class="space-y-4">
-    <!-- Notifications will be listed here -->
-  </div>
+<!-- Manage Notifications -->
+<div class="mb-8 w-full max-w-screen-lg mx-auto p-4 bg-gray-900/50 rounded-lg">
+<h1 class="text-2xl font-bold mb-4">Manage Notifications</h1>
+<table class="w-full text-left border-collapse mb-4">
+  <thead>
+    <tr>
+      <th class="border-b border-white/20 p-2">Title</th>
+      <th class="border-b border-white/20 p-2">Message</th>
+      <th class="border-b border-white/20 p-2">Link</th>
+      <th class="border-b border-white/20 p-2">Timestamp</th>
+      <th class="border-b border-white/20 p-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="notifications-table" class="divide-y divide-white/10"></tbody>
+</table>
 </div>
 
-<!-- Manage Users Section -->
-<div class="w-screen bg-gray-700/90 p-6 backdrop-blur-md mt-8">
-  <h2 class="text-2xl font-bold mb-4 text-white">Manage Users</h2>
-  <table class="w-full text-left table-auto border-collapse border border-white/20">
-    <thead>
-      <tr class="border-b border-white/20">
-        <th class="p-2">User ID</th>
-        <th class="p-2">Name</th>
-        <th class="p-2">Role</th>
-        <th class="p-2">Change Role</th>
-        <th class="p-2">Delete</th>
-      </tr>
-    </thead>
-    <tbody id="users-list">
-      <!-- Users will be dynamically listed here -->
-    </tbody>
-  </table>
+<!-- Manage Users -->
+<div class="mb-8 w-full max-w-screen-lg mx-auto p-4 bg-gray-900/50 rounded-lg">
+<h1 class="text-2xl font-bold mb-4">Manage Users</h1>
+<table class="w-full text-left border-collapse">
+  <thead>
+    <tr>
+      <th class="border-b border-white/20 p-2">Email</th>
+      <th class="border-b border-white/20 p-2">Name</th>
+      <th class="border-b border-white/20 p-2">Role</th>
+      <th class="border-b border-white/20 p-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="users-table" class="divide-y divide-white/10"></tbody>
+</table>
 </div>
+
+<div id="footer"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, push, set, get, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, deleteUser, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, push, set, get, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
-    authDomain: "tamilgeoapp.firebaseapp.com",
-    databaseURL: "https://tamilgeoapp-default-rtdb.firebaseio.com",
-    projectId: "tamilgeoapp",
-    storageBucket: "tamilgeoapp.appspot.com",
-    messagingSenderId: "1092623024431",
-    appId: "1:1092623024431:web:ea455dd68a9fcf480be1da"
+  apiKey: "AIzaSyDt86oFFa-h04TsfMWSFGe3UHw26WYoR-U",
+  authDomain: "tamilgeoapp.firebaseapp.com",
+  databaseURL: "https://tamilgeoapp-default-rtdb.firebaseio.com",
+  projectId: "tamilgeoapp",
+  storageBucket: "tamilgeoapp.appspot.com",
+  messagingSenderId: "1092623024431",
+  appId: "1:1092623024431:web:ea455dd68a9fcf480be1da"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -98,139 +111,163 @@ const db = getDatabase(app);
 const sendBtn = document.getElementById("send-btn");
 const syncBtn = document.getElementById("sync-btn");
 const statusText = document.getElementById("status");
-const notificationsList = document.getElementById("notifications-list");
-const usersList = document.getElementById("users-list");
 
-// Auth guard
 onAuthStateChanged(auth, user => {
-    if (!user) {
-        alert("Please log in as admin.");
-        window.location.href = "login.html";
-        return;
-    }
+  if (!user) {
+    alert("Please log in as admin to access admin panel.");
+    window.location.href = "login.html";
+    return;
+  }
+  loadNotifications();
+  loadUsers();
 });
 
-// Send notification
+// Send Notification
 sendBtn.addEventListener("click", async () => {
-    const title = document.getElementById("notif-title").value.trim();
-    const message = document.getElementById("notif-message").value.trim();
-    const link = document.getElementById("notif-link").value.trim();
-    if (!title || !message) {
-        statusText.textContent = "Title and message required";
-        statusText.className = "text-red-400";
-        return;
-    }
-    const notifRef = push(ref(db, "notifications"));
-    await set(notifRef, { title, message, link: link || null, timestamp: Date.now() });
-    statusText.textContent = "✅ Notification sent!";
-    statusText.className = "text-green-400";
-    loadNotifications();
+  const title = document.getElementById("notif-title").value.trim();
+  const message = document.getElementById("notif-message").value.trim();
+  const link = document.getElementById("notif-link").value.trim();
+
+  if (!title || !message) {
+    statusText.textContent = "Title and message are required.";
+    statusText.className = "text-red-400";
+    return;
+  }
+
+  const notifRef = push(ref(db, "notifications"));
+  await set(notifRef, { title, message, link: link || null, timestamp: Date.now() });
+
+  statusText.textContent = "✅ Notification sent successfully!";
+  statusText.className = "text-green-400";
+  document.getElementById("notif-title").value = "";
+  document.getElementById("notif-message").value = "";
+  document.getElementById("notif-link").value = "";
+  loadNotifications();
 });
 
-// Sync WordPress posts
+// Sync WordPress Posts
 syncBtn.addEventListener("click", async () => {
-    statusText.textContent = "⏳ Syncing blog posts...";
-    statusText.className = "text-yellow-400";
-    try {
-        const res = await fetch("https://tamilgeo.wordpress.com/wp-json/wp/v2/posts?per_page=5&_fields=title,link,date");
-        const posts = await res.json();
-        const existingSnapshot = await get(ref(db, "notifications"));
-        const existingData = existingSnapshot.val() || {};
-        const existingLinks = Object.values(existingData).map(n => (n.link||"").replace(/\/$/,"").trim());
+  const wordpressURL = "https://tamilgeo.wordpress.com/wp-json/wp/v2/posts?per_page=5&_fields=title,link,date";
+  statusText.textContent = "⏳ Syncing blog posts...";
+  statusText.className = "text-yellow-400";
 
-        let addedCount = 0;
-        for (const post of posts) {
-            const postLink = (post.link||"").replace(/\/$/,"").trim();
-            if (!existingLinks.includes(postLink)) {
-                const notifRef = push(ref(db, "notifications"));
-                await set(notifRef, { title: post.title.rendered, message: "New blog post available!", link: postLink, timestamp: new Date(post.date).getTime() });
-                addedCount++;
-            }
-        }
-        statusText.textContent = addedCount > 0 ? `✅ Synced ${addedCount} new posts!` : "ℹ No new posts";
-        statusText.className = addedCount > 0 ? "text-green-400" : "text-blue-400";
-        loadNotifications();
-    } catch(err) {
-        console.error(err);
-        statusText.textContent = "❌ Error syncing posts";
-        statusText.className = "text-red-400";
+  const normalizeLink = link => (link || "").replace(/\/$/, "").trim();
+
+  try {
+    const existingSnapshot = await get(ref(db, "notifications"));
+    const existingData = existingSnapshot.val() || {};
+    const existingLinks = Object.values(existingData).map(n => normalizeLink(n.link));
+
+    const res = await fetch(wordpressURL);
+    const posts = await res.json();
+
+    let addedCount = 0;
+    for (const post of posts) {
+      const postLink = normalizeLink(post.link);
+      if (!existingLinks.includes(postLink)) {
+        const notifRef = push(ref(db, "notifications"));
+        await set(notifRef, { title: post.title.rendered, message: "New blog post available!", link: postLink, timestamp: new Date(post.date).getTime() });
+        addedCount++;
+      }
     }
+
+    if (addedCount > 0) {
+      statusText.textContent = `✅ Synced ${addedCount} new posts!`;
+      statusText.className = "text-green-400";
+    } else {
+      statusText.textContent = "ℹ No new posts to sync.";
+      statusText.className = "text-blue-400";
+    }
+    loadNotifications();
+  } catch (err) {
+    console.error(err);
+    statusText.textContent = "❌ Error syncing blog posts.";
+    statusText.className = "text-red-400";
+  }
 });
 
-// Load notifications dynamically
-function loadNotifications() {
-    const notifRef = ref(db, "notifications");
-    onValue(notifRef, snapshot => {
-        const data = snapshot.val() || {};
-        notificationsList.innerHTML = "";
-        Object.entries(data).forEach(([id, notif]) => {
-            const div = document.createElement("div");
-            div.className = "card p-4 flex justify-between items-center";
-            div.innerHTML = `
-                <div>
-                    <p class="font-semibold">${notif.title}</p>
-                    <p class="text-sm text-gray-300">${notif.message}</p>
-                    ${notif.link ? `<a href="${notif.link}" target="_blank" class="text-blue-400 text-sm underline">${notif.link}</a>` : ""}
-                </div>
-                <button class="bg-red-500 hover:bg-red-600 py-1 px-3 rounded text-white" onclick="deleteNotification('${id}')">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            `;
-            notificationsList.appendChild(div);
-        });
+// Load Notifications
+async function loadNotifications() {
+  const snapshot = await get(ref(db, "notifications"));
+  const notifications = snapshot.val() || {};
+  const table = document.getElementById("notifications-table");
+  table.innerHTML = "";
+
+  Object.keys(notifications).forEach(id => {
+    const n = notifications[id];
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="p-2">${n.title}</td>
+      <td class="p-2">${n.message}</td>
+      <td class="p-2">${n.link || ""}</td>
+      <td class="p-2">${new Date(n.timestamp).toLocaleString()}</td>
+      <td class="p-2">
+        <button class="delete-notif bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white" data-id="${id}">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+
+  document.querySelectorAll(".delete-notif").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const id = e.target.closest("button").dataset.id;
+      if (!confirm("Delete this notification?")) return;
+      await remove(ref(db, `notifications/${id}`));
+      loadNotifications();
     });
+  });
 }
 
-// Delete notification
-window.deleteNotification = async (id) => {
-    await remove(ref(db, `notifications/${id}`));
-}
+// Load Users
+async function loadUsers() {
+  const snapshot = await get(ref(db, "users"));
+  const users = snapshot.val() || {};
+  const table = document.getElementById("users-table");
+  table.innerHTML = "";
 
-// Load users dynamically
-function loadUsers() {
-    const usersRef = ref(db, "users");
-    onValue(usersRef, snapshot => {
-        const data = snapshot.val() || {};
-        usersList.innerHTML = "";
-        Object.entries(data).forEach(([uid, user]) => {
-            const tr = document.createElement("tr");
-            tr.className = "border-b border-white/20";
-            tr.innerHTML = `
-                <td class="p-2">${uid}</td>
-                <td class="p-2">${user.name || ""}</td>
-                <td class="p-2">${user.role || "user"}</td>
-                <td class="p-2">
-                    <select class="bg-gray-800 text-white p-1 rounded" onchange="changeRole('${uid}', this.value)">
-                        <option value="user" ${user.role==='user'?'selected':''}>User</option>
-                        <option value="admin" ${user.role==='admin'?'selected':''}>Admin</option>
-                    </select>
-                </td>
-                <td class="p-2">
-                    <button class="bg-red-500 hover:bg-red-600 py-1 px-3 rounded text-white" onclick="deleteUser('${uid}')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            usersList.appendChild(tr);
-        });
+  Object.keys(users).forEach(uid => {
+    const u = users[uid];
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="p-2">${u.email}</td>
+      <td class="p-2">${u.name || ""}</td>
+      <td class="p-2">
+        <select class="role-select bg-gray-800 text-white p-1 rounded" data-uid="${uid}">
+          <option value="user" ${u.role === "user" ? "selected" : ""}>User</option>
+          <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+        </select>
+      </td>
+      <td class="p-2">
+        <button class="delete-user bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white" data-uid="${uid}">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+
+  document.querySelectorAll(".role-select").forEach(sel => {
+    sel.addEventListener("change", async e => {
+      const uid = e.target.dataset.uid;
+      const role = e.target.value;
+      await update(ref(db, `users/${uid}`), { role });
     });
-}
+  });
 
-// Change user role
-window.changeRole = async (uid, role) => {
-    await update(ref(db, `users/${uid}`), { role });
+  document.querySelectorAll(".delete-user").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const uid = e.target.dataset.uid;
+      if (!confirm("Delete this user?")) return;
+      await remove(ref(db, `users/${uid}`));
+      loadUsers();
+    });
+  });
 }
-
-// Delete user
-window.deleteUser = async (uid) => {
-    if (confirm("Are you sure you want to delete this user?")) {
-        await remove(ref(db, `users/${uid}`));
-    }
-}
-
-// Initial load
-loadNotifications();
-loadUsers();
 </script>
+
+<script type="module" src="assets/js/header.js"></script>
+<script type="module" src="assets/js/footer.js"></script>
 </body>
 </html>
