@@ -1,7 +1,7 @@
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Firebase Config
 const firebaseConfig = {
@@ -20,15 +20,32 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 
-// Email/Password login
+// Username/Password login
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("email").value.trim();
+  const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // Step 1: Find the email for the username
+    const usersSnap = await get(ref(db, "users"));
+    let foundEmail = null;
+    usersSnap.forEach(childSnap => {
+      const userData = childSnap.val();
+      if (userData.username && userData.username.toLowerCase() === username.toLowerCase()) {
+        foundEmail = userData.email;
+      }
+    });
+
+    if (!foundEmail) {
+      alert("Username not found!");
+      return;
+    }
+
+    // Step 2: Login with the found email
+    const userCredential = await signInWithEmailAndPassword(auth, foundEmail, password);
     const user = userCredential.user;
+
     await set(ref(db, `users/${user.uid}/lastLogin`), new Date().toISOString());
     alert("Login successful!");
     window.location.href = "index.html";
@@ -37,16 +54,19 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-// Google Sign-In
+// Google Sign-In (still email-based, but can store username too)
 document.getElementById("google-login").addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+
     await set(ref(db, `users/${user.uid}`), {
+      username: user.displayName.replace(/\s+/g, '').toLowerCase(),
       name: user.displayName,
       email: user.email,
       lastLogin: new Date().toISOString()
     });
+
     alert(`Welcome ${user.displayName}!`);
     window.location.href = "index.html";
   } catch (error) {
