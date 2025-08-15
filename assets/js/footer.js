@@ -80,39 +80,9 @@ document.getElementById("footerAccount").addEventListener("click", () => {
   }
 });
 
-// Function to update the account icon
-function updateAccountIcon(user) {
-  const accountBtn = document.getElementById("footerAccount");
-  if (user) {
-    const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff`;
-    accountBtn.innerHTML = `<img src="${photoURL}" class="h-7 w-7 rounded-full border border-white object-cover" alt="Profile">`;
-  } else {
-    accountBtn.innerHTML = `<i class="fa-solid fa-user-circle"></i>`;
-  }
-}
-
-// Firebase auth listener (updates when user logs in/out or updates profile)
-onAuthStateChanged(auth, async (user) => {
+// Firebase auth listener (only sets loggedIn, icon stays same)
+onAuthStateChanged(auth, (user) => {
   loggedIn = !!user;
-  if (loggedIn) {
-    await user.reload(); // Get latest profile data
-    updateAccountIcon(auth.currentUser);
-  } else {
-    updateAccountIcon(null);
-  }
-});
-
-// Listen for storage event (triggered when account.html updates profile)
-window.addEventListener("storage", (event) => {
-  if (event.key === "profileUpdated" && event.newValue === "true") {
-    const user = auth.currentUser;
-    if (user) {
-      user.reload().then(() => {
-        updateAccountIcon(auth.currentUser);
-        localStorage.removeItem("profileUpdated"); // Reset flag
-      });
-    }
-  }
 });
 
 // Hide footer on scroll
