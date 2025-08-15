@@ -27,53 +27,45 @@
 <div class="glass-card w-full max-w-lg p-8 rounded-xl border border-white/10 shadow-lg space-y-6">
   <h1 class="text-2xl font-bold text-green-400 text-center mb-4">My Account</h1>
 
-  <!-- Profile Photo -->
-  <div class="flex flex-col items-center">
-    <img id="profile-pic" src="https://via.placeholder.com/120" class="w-28 h-28 rounded-full border-2 border-green-400 object-cover mb-3">
-    <input type="file" id="profile-upload" class="hidden" accept="image/*">
-    <button onclick="document.getElementById('profile-upload').click()" class="px-4 py-2 bg-green-500 rounded-md hover:bg-green-600 transition">
-      <i class="fa-solid fa-camera"></i> Change Photo
-    </button>
+<!-- Profile Photo -->
+<div class="flex flex-col items-center">
+  <img id="profile-pic" src="https://via.placeholder.com/120" class="w-28 h-28 rounded-full border-2 border-green-400 object-cover mb-3">
+  <input type="file" id="profile-upload" class="hidden" accept="image/*">
+  <button onclick="document.getElementById('profile-upload').click()" class="px-4 py-2 bg-green-500 rounded-md hover:bg-green-600 transition">
+    <i class="fa-solid fa-camera"></i> Change Photo
+  </button>
+</div>
+
+<!-- Account Info -->
+<div class="space-y-4 mt-4">
+  <div>
+    <label class="text-sm text-gray-300">Name</label>
+    <input type="text" id="name" class="input-field">
   </div>
 
-  <!-- Account Info -->
-  <div class="space-y-4">
-    <div>
-      <label class="text-sm text-gray-300">Name</label>
-      <input type="text" id="name" class="input-field">
-    </div>
-
-    <div>
-      <label class="text-sm text-gray-300">Username</label>
-      <input type="text" id="username" class="input-field bg-gray-700" disabled>
-    </div>
-
-    <div>
-      <label class="text-sm text-gray-300">Email</label>
-      <input type="email" id="email" class="input-field">
-    </div>
-
-    <div>
-      <label class="text-sm text-gray-300">Role</label>
-      <input type="text" id="role" class="input-field bg-gray-700" disabled>
-    </div>
+  <div>
+    <label class="text-sm text-gray-300">Username</label>
+    <input type="text" id="username" class="input-field bg-gray-700" disabled>
   </div>
 
-  <!-- Update Password -->
-  <div class="mt-6">
-    <h2 class="text-lg font-semibold text-green-300 mb-3">Change Password</h2>
-    <input type="password" id="new-password" class="input-field mb-3" placeholder="New Password">
-    <input type="password" id="confirm-password" class="input-field mb-3" placeholder="Confirm New Password">
-    <button id="update-password" class="w-full px-4 py-2 bg-blue-500 rounded-md hover:bg-blue-600 transition">
-      Update Password
-    </button>
+  <div>
+    <label class="text-sm text-gray-300">Email</label>
+    <input type="email" id="email" class="input-field">
   </div>
 
-  <!-- Save Changes -->
+  <div>
+    <label class="text-sm text-gray-300">Role</label>
+    <input type="text" id="role" class="input-field bg-gray-700" disabled>
+  </div>
+</div>
+
+<!-- Save Changes -->
+<div class="mt-6">
   <button id="save-account" class="w-full px-4 py-2 bg-green-500 rounded-md hover:bg-green-600 transition">
     Save Changes
   </button>
 </div>
+
 
 <script type="module" src="assets/js/account.js"></script>
 </body>
