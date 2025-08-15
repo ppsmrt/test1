@@ -44,6 +44,9 @@ function hideSpinner() {
 function enhanceContent(html) {
   let content = html;
 
+  // Treat <hr> as ||| separator
+  content = content.replace(/<hr\s*\/?>/gi, '|||');
+
   // Style headings
   content = content
     .replace(/<h1>/g, '<h1 class="text-3xl font-bold text-green-300 mb-4">')
