@@ -2,14 +2,46 @@
 <html lang="ta">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Post - TamilGeo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TamilGeo - Home</title>
+
+  <!-- ✅ Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Quill.js CSS (for rich text editor) -->
+  <!-- ✅ Font Awesome 6.5.2 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-MC6E5vbeSFRYxuVXWaJjXKQn5SC2eYyEUZ+cfYY4gXavwhC2EeUlDRt7rkKHlf6IikIfZngjRvmhYlZ4m+Oc7Q=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+<!-- ✅ Quill.js CSS (for rich text editor) -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+
+  <style>
+    .floating-footer {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .card {
+      transition: all 0.4s ease;
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
+      border-color: rgba(0,255,200,0.4);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex flex-col min-h-screen font-sans">
 
   <!-- ✅ Shared Header -->
   <div id="shared-header"></div>
