@@ -21,12 +21,29 @@ const postURL = `https://public-api.wordpress.com/wp/v2/sites/tamilgeo.wordpress
 const container = document.getElementById("post-container");
 const footer = document.getElementById("footer");
 
-// Adjust bottom padding to prevent footer overlap
+// Add bottom padding for footer
 function adjustPadding() {
   container.style.paddingBottom = `${footer.offsetHeight}px`;
 }
 window.addEventListener("resize", adjustPadding);
 adjustPadding();
+
+// Add loading spinner
+container.innerHTML = `
+  <div class="flex justify-center items-center h-64">
+    <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-300 h-16 w-16"></div>
+  </div>
+  <style>
+    .loader {
+      border-top-color: #3498db;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+`;
 
 // Fetch and render post
 fetch(postURL)
@@ -36,7 +53,6 @@ fetch(postURL)
       ? `<img src="${post.jetpack_featured_media_url}" class="w-full h-60 object-cover rounded-md mb-4">`
       : "";
 
-    // Wrap videos in responsive container
     const contentWithResponsiveVideos = post.content.rendered.replace(
       /<iframe.*?<\/iframe>/g,
       match => `<div class="video-container mb-4">${match}</div>`
@@ -63,7 +79,11 @@ fetch(postURL)
           <h3 class="font-semibold text-lg mb-2">💬 Comments</h3>
           <textarea placeholder="Write a comment..." class="w-full p-2 border rounded mb-2 text-black" id="comment-box"></textarea>
           <button onclick="addComment()" class="bg-green-600 text-white px-3 py-1 rounded">Post Comment</button>
-          <div id="comments" class="mt-4 space-y-2 text-sm text-gray-300"></div>
+          <div id="comments" class="mt-4 space-y-2 text-sm text-gray-300">
+            <div class="flex justify-center items-center h-16">
+              <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-300 h-8 w-8"></div>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -126,6 +146,8 @@ function loadComments() {
       Object.values(comments).forEach(comment => {
         commentsDiv.innerHTML += `<div class="bg-gray-700 p-2 rounded">${comment}</div>`;
       });
+    } else {
+      commentsDiv.innerHTML = `<p class="text-gray-400">No comments yet.</p>`;
     }
   });
 }
