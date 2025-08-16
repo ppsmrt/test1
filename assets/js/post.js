@@ -23,7 +23,8 @@ const footer = document.getElementById("footer");
 
 // Add bottom padding for footer
 function adjustPadding() {
-  container.style.paddingBottom = `${footer.offsetHeight}px`;
+  if (!footer) return;
+  container.style.paddingBottom = `${footer.offsetHeight + 20}px`; // extra breathing space
 }
 window.addEventListener("resize", adjustPadding);
 adjustPadding();
@@ -80,6 +81,9 @@ fetch(postURL)
     // Load Firebase data
     updateLikeCount();
     loadComments();
+
+    // Re-adjust bottom padding after content loads
+    adjustPadding();
 
     // Inject extra CSS for quotes & tables
     const style = document.createElement("style");
