@@ -5,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - TamilGeo</title>
 
-<!-- ✅ Tailwind CSS -->
+  <!-- ✅ Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- ✅ Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-MC6E5vbeSFRYxuVXWaJjXKQn5SC2eYyEUZ+cfYY4gXavwhC2EeUlDRt7rkKHlf6IikIfZngjRvmhYlZ4m+Oc7Q=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 
   <!-- ✅ Custom Styles -->
   <link rel="stylesheet" href="assets/css/styles.css" />
@@ -28,22 +34,6 @@
       left: 0;
       z-index: 0;
     }
-  </style>
-
-  <!-- ✅ Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- ✅ Font Awesome 6.5.2 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    integrity="sha512-MC6E5vbeSFRYxuVXWaJjXKQn5SC2eYyEUZ+cfYY4gXavwhC2EeUlDRt7rkKHlf6IikIfZngjRvmhYlZ4m+Oc7Q=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-
-  <style>
     .floating-footer {
       backdrop-filter: blur(14px);
       background: rgba(255, 255, 255, 0.1);
@@ -59,6 +49,13 @@
       box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
       border-color: rgba(0,255,200,0.4);
     }
+    /* Reusable styles */
+    .input-field {
+      @apply w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:outline-none;
+    }
+    .btn-primary {
+      @apply flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex items-center justify-center min-h-screen font-sans">
@@ -70,35 +67,35 @@
   <canvas id="bgCanvas"></canvas>
 
   <!-- Login Card -->
-<div class="glass-card w-full max-w-sm p-8 rounded-2xl border border-white/10 shadow-lg text-center z-10">
-  <h1 class="text-3xl font-bold mb-6 text-green-300">Welcome Back</h1>
-  <p class="text-gray-400 mb-6">Sign in to continue</p>
+  <div class="glass-card w-full max-w-sm p-8 rounded-2xl border border-white/10 shadow-lg text-center z-10 relative bg-gray-800/50">
+    <h1 class="text-3xl font-bold mb-6 text-green-300">Welcome Back</h1>
+    <p class="text-gray-400 mb-6">Sign in to continue</p>
 
-  <form id="login-form" class="space-y-5">
-    <div class="relative">
-      <i class="fa-solid fa-user absolute left-3 top-3 text-green-400"></i>
-      <input type="text" id="username" placeholder="Username" class="input-field pl-10" required />
-    </div>
+    <form id="login-form" class="space-y-5">
+      <div class="relative">
+        <i class="fa-solid fa-user absolute left-3 top-3 text-green-400"></i>
+        <input type="text" id="username" placeholder="Username" class="input-field pl-10" required />
+      </div>
 
-    <div class="relative">
-      <i class="fa-solid fa-lock absolute left-3 top-3 text-green-400"></i>
-      <input type="password" id="password" placeholder="Password" class="input-field pl-10" required />
-    </div>
+      <div class="relative">
+        <i class="fa-solid fa-lock absolute left-3 top-3 text-green-400"></i>
+        <input type="password" id="password" placeholder="Password" class="input-field pl-10" required />
+      </div>
 
-    <button type="submit" class="btn-primary w-full">
-      <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
-    </button>
-  </form>
+      <button type="submit" class="btn-primary w-full">
+        <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
+      </button>
+    </form>
 
-  <p class="text-sm text-gray-400 mt-6">
-    Don't have an account? 
-    <a href="signup.html" class="text-green-400 hover:underline">Sign Up</a>
-  </p>
-</div>
+    <p class="text-sm text-gray-400 mt-6">
+      Don't have an account? 
+      <a href="signup.html" class="text-green-400 hover:underline">Sign Up</a>
+    </p>
+  </div>
 
-<div id="footer"></div>
-<script type="module" src="assets/js/header.js"></script>
-<script type="module" src="assets/js/footer.js"></script>
+  <div id="footer"></div>
+  <script type="module" src="assets/js/header.js"></script>
+  <script type="module" src="assets/js/footer.js"></script>
 
 </body>
 </html>
