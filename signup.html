@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - TamilGeo</title>
+
+  <!-- ✅ Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Font Awesome -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-MC6E5vbeSFRYxuVXWaJjXKQn5SC2eYyEUZ+cfYY4gXavwhC2EeUlDRt7rkKHlf6IikIfZngjRvmhYlZ4m+Oc7Q=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .input-field {
+      @apply w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400 focus:outline-none;
+    }
+    .btn-primary {
+      @apply flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition w-full;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen flex flex-col">
+
+  <!-- ✅ Shared Header -->
+  <div id="shared-header"></div>
+
+  <!-- ✅ Particle Background -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- ✅ Signup Section -->
+  <main class="flex-1 flex items-center justify-center z-10 relative">
+    <div class="w-full max-w-lg bg-gray-800/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-10">
+      <h1 class="text-4xl font-bold mb-4 text-center text-green-300">Create Account</h1>
+      <p class="text-gray-400 text-center mb-8">Sign up with a username</p>
+
+      <form id="signup-form" class="space-y-6">
+        <div class="relative">
+          <i class="fa-solid fa-user absolute left-4 top-4 text-green-400"></i>
+          <input type="text" id="username" placeholder="Choose Username" class="input-field pl-12" required />
+        </div>
+
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-4 text-green-400"></i>
+          <input type="password" id="password" placeholder="Password" class="input-field pl-12" required />
+        </div>
+
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-4 text-green-400"></i>
+          <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field pl-12" required />
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <i class="fa-solid fa-user-plus mr-2"></i> Sign Up
+        </button>
+      </form>
+
+      <p class="text-sm text-gray-400 text-center mt-6">
+        Already have an account? 
+        <a href="login.html" class="text-green-400 hover:underline">Login</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- ✅ Shared Footer -->
+  <div id="footer"></div>
+
+  <!-- ✅ Firebase Signup Script -->
+  <script type="module" src="assets/js/signup.js"></script>
+
+  <!-- ✅ Header/Footer Loader -->
+  <script type="module" src="assets/js/header.js"></script>
+  <script type="module" src="assets/js/footer.js"></script>
+
+  <!-- ✅ Particle Background (same as login) -->
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,255,200,0.5)";
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+  </script>
+</body>
+</html>
