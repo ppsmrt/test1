@@ -43,15 +43,25 @@ fetch(postURL)
 
     container.innerHTML = `
       <div class="bg-white/5 p-6 rounded-lg shadow-md text-white">
-        <h2 class="text-2xl font-bold mb-2">${post.title.rendered}</h2>
-        <div class="text-sm text-gray-400 mb-4">
+
+        <!-- Featured Image -->
+        ${image}
+
+        <!-- Title -->
+        <h2 class="text-3xl font-bold mb-4">${post.title.rendered}</h2>
+
+        <!-- Post Content -->
+        <div class="post-content prose prose-invert max-w-none mb-6">
+          ${contentWithResponsiveVideos}
+        </div>
+
+        <!-- Meta Info -->
+        <div class="text-sm text-gray-400 mt-6 border-t border-gray-700 pt-3">
           👤 Author: TamilGeo | 🗓️ ${new Date(post.date).toLocaleDateString()}
         </div>
-        ${image}
-        <div class="post-content prose max-w-none mb-6">${contentWithResponsiveVideos}</div>
 
         <!-- Like & Share -->
-        <div class="mt-4 flex items-center gap-3">
+        <div class="mt-6 flex items-center gap-3">
           <button onclick="likePost()" class="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600">♥ Like</button>
           <span id="like-count" class="text-sm text-gray-300">♥ 0 Likes</span>
           <button onclick="sharePost()" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">🔗 Share</button>
@@ -70,6 +80,35 @@ fetch(postURL)
     // Load Firebase data
     updateLikeCount();
     loadComments();
+
+    // Inject extra CSS for quotes & tables
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .post-content blockquote {
+        border-left: 4px solid #38bdf8;
+        padding-left: 1rem;
+        color: #d1d5db;
+        font-style: italic;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.375rem;
+        margin: 1rem 0;
+      }
+      .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      .post-content th,
+      .post-content td {
+        border: 1px solid #4b5563;
+        padding: 0.5rem;
+      }
+      .post-content th {
+        background-color: rgba(255, 255, 255, 0.1);
+        font-weight: 600;
+      }
+    `;
+    document.head.appendChild(style);
   })
   .catch(err => {
     container.innerHTML = `<p class="text-red-400">❌ Failed to load post.</p>`;
