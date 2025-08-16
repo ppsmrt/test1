@@ -28,7 +28,7 @@ let currentUser = null;
 // Add bottom padding for footer
 function adjustPadding() {
   if (!footer) return;
-  container.style.paddingBottom = `${footer.offsetHeight + 20}px`; // extra breathing space
+  container.style.paddingBottom = `${footer.offsetHeight + 40}px`; // more breathing space
 }
 window.addEventListener("resize", adjustPadding);
 adjustPadding();
@@ -177,6 +177,7 @@ function updateLikeSection() {
     } else {
       likeUsersDiv.innerHTML = `<p class="text-gray-400">No likes yet.</p>`;
     }
+    adjustPadding(); // ensure padding updated after likes load
   });
 }
 
@@ -216,5 +217,6 @@ function loadComments() {
     } else {
       commentsDiv.innerHTML = `<p class="text-gray-400">No comments yet.</p>`;
     }
+    adjustPadding(); // ensure padding updated after comments load
   });
 }
