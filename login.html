@@ -18,11 +18,6 @@
   />
 
   <!-- ✅ Custom Styles -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
-
-  <!-- ✅ Login JS -->
-  <script type="module" src="assets/js/login.js" defer></script>
-
   <style>
     body {
       margin: 0;
@@ -32,70 +27,168 @@
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
     }
-    .floating-footer {
-      backdrop-filter: blur(14px);
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    .card {
-      transition: all 0.4s ease;
-      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 15px 35px rgba(0, 255, 200, 0.4);
-      border-color: rgba(0,255,200,0.4);
-    }
-    /* Reusable styles */
     .input-field {
-      @apply w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:outline-none;
+      @apply w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400 focus:outline-none;
     }
     .btn-primary {
-      @apply flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition;
+      @apply flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition w-full;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex items-center justify-center min-h-screen font-sans">
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen flex flex-col">
 
   <!-- ✅ Shared Header -->
   <div id="shared-header"></div>
 
-  <!-- Particle Background -->
+  <!-- ✅ Particle Background -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- Login Card -->
-  <div class="glass-card w-full max-w-sm p-8 rounded-2xl border border-white/10 shadow-lg text-center z-10 relative bg-gray-800/50">
-    <h1 class="text-3xl font-bold mb-6 text-green-300">Welcome Back</h1>
-    <p class="text-gray-400 mb-6">Sign in to continue</p>
+  <!-- ✅ Login Section -->
+  <main class="flex-1 flex items-center justify-center z-10 relative">
+    <div class="w-full max-w-lg bg-gray-800/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-10">
+      <h1 class="text-4xl font-bold mb-4 text-center text-green-300">Welcome Back</h1>
+      <p class="text-gray-400 text-center mb-8">Login with your username</p>
 
-    <form id="login-form" class="space-y-5">
-      <div class="relative">
-        <i class="fa-solid fa-user absolute left-3 top-3 text-green-400"></i>
-        <input type="text" id="username" placeholder="Username" class="input-field pl-10" required />
-      </div>
+      <form id="login-form" class="space-y-6">
+        <div class="relative">
+          <i class="fa-solid fa-user absolute left-4 top-4 text-green-400"></i>
+          <input type="text" id="username" placeholder="Username" class="input-field pl-12" required />
+        </div>
 
-      <div class="relative">
-        <i class="fa-solid fa-lock absolute left-3 top-3 text-green-400"></i>
-        <input type="password" id="password" placeholder="Password" class="input-field pl-10" required />
-      </div>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-4 text-green-400"></i>
+          <input type="password" id="password" placeholder="Password" class="input-field pl-12" required />
+        </div>
 
-      <button type="submit" class="btn-primary w-full">
-        <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
-      </button>
-    </form>
+        <button type="submit" class="btn-primary">
+          <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
+        </button>
+      </form>
 
-    <p class="text-sm text-gray-400 mt-6">
-      Don't have an account? 
-      <a href="signup.html" class="text-green-400 hover:underline">Sign Up</a>
-    </p>
-  </div>
+      <p class="text-sm text-gray-400 text-center mt-6">
+        Don't have an account? 
+        <a href="signup.html" class="text-green-400 hover:underline">Sign Up</a>
+      </p>
+    </div>
+  </main>
 
+  <!-- ✅ Shared Footer -->
   <div id="footer"></div>
+
+  <!-- ✅ Firebase SDK -->
+  <script type="module">
+    // Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // ✅ Your Firebase Config (replace with your credentials)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // ✅ Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ✅ Login Handling
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in all fields!");
+        return;
+      }
+
+      try {
+        const snapshot = await get(child(ref(db), "users/" + username));
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          if (userData.password === password) {
+            alert("✅ Login Successful! Welcome " + username);
+            window.location.href = "dashboard.html"; // redirect
+          } else {
+            alert("❌ Wrong password!");
+          }
+        } else {
+          alert("❌ User not found!");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error logging in. Try again later.");
+      }
+    });
+  </script>
+
+  <!-- ✅ Header/Footer Loader -->
   <script type="module" src="assets/js/header.js"></script>
   <script type="module" src="assets/js/footer.js"></script>
 
+  <!-- ✅ Particle Background Script -->
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,255,200,0.5)";
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+  </script>
 </body>
 </html>
